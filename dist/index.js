@@ -10,14 +10,13 @@ app.get('/', (request, response) => {
     return response.status(200).send("Welcome to METABOT");
 });
 app.get('/webhook', (request, response) => {
-    var data = {};
-    try {
-        data = { Request: request.body, Response: response };
-    }
-    catch (ex) {
-        data = ex;
-    }
-    return response.status(200).send(JSON.stringify(data));
+    // var data = {};
+    // try{
+    //     data = {Request: request.body, Response: response};
+    // }catch(ex){
+    //     data = ex;
+    // }
+    return response.status(200).send("Hello Webhook");
 });
 app.post('/webhook', async (request, response) => {
     var data = {};

@@ -9,13 +9,13 @@ app.get('/', (request: Request, response: Response) => {
 
 app.get('/webhook', (request: Request, response: Response) => {
 
-    var data = {};
-    try{
-        data = {Request: request.body, Response: response};
-    }catch(ex){
-        data = ex;
-    }
-    return response.status(200).send(JSON.stringify(data));
+    // var data = {};
+    // try{
+    //     data = {Request: request.body, Response: response};
+    // }catch(ex){
+    //     data = ex;
+    // }
+    return response.status(200).send("Hello Webhook");
 });
 
 app.post('/webhook', async (request: Request, response: Response) => {

@@ -8,11 +8,11 @@ app.get('/', (request: Request, response: Response) => {
 });
 
 app.get('/webhook', (request: Request, response: Response) => {
-    response.status(200).send({Request: request, Response: response});
+    response.status(200).send({Request: request.body, Response: response});
 });
 
 app.post('/webhook', async (request: Request, response: Response) => {
-    response.status(200).send({Request: request, Response: response});  
+    response.status(200).send({Request: request.body, Response: response});  
 });
 
 app.listen(port, () => {

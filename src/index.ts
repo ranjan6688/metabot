@@ -13,9 +13,9 @@ app.get('/webhook', (request: Request, response: Response) => {
     try{
         data = {Request: request.body, Response: response};
     }catch(ex){
-        data = JSON.stringify(ex);
+        data = ex;
     }
-    response.status(200).send(data);
+    return response.status(200).send(JSON.stringify(data));
 });
 
 app.post('/webhook', async (request: Request, response: Response) => {
@@ -24,9 +24,9 @@ app.post('/webhook', async (request: Request, response: Response) => {
     try{
         data = {Request: request.body, Response: response};
     }catch(ex){
-        data = JSON.stringify(ex);
+        data = ex;
     }
-    response.status(200).send(data);
+    response.status(200).send(JSON.stringify(data));
 });
 
 app.listen(port, () => {

@@ -15,9 +15,9 @@ app.get('/webhook', (request, response) => {
         data = { Request: request.body, Response: response };
     }
     catch (ex) {
-        data = JSON.stringify(ex);
+        data = ex;
     }
-    response.status(200).send(data);
+    return response.status(200).send(JSON.stringify(data));
 });
 app.post('/webhook', async (request, response) => {
     var data = {};
@@ -25,9 +25,9 @@ app.post('/webhook', async (request, response) => {
         data = { Request: request.body, Response: response };
     }
     catch (ex) {
-        data = JSON.stringify(ex);
+        data = ex;
     }
-    response.status(200).send(data);
+    response.status(200).send(JSON.stringify(data));
 });
 app.listen(port, () => {
     return console.log(`Server is listening on ${port}`);

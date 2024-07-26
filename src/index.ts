@@ -8,11 +8,25 @@ app.get('/', (request: Request, response: Response) => {
 });
 
 app.get('/webhook', (request: Request, response: Response) => {
-    response.status(200).send({Request: request.body, Response: response});
+
+    var data = {};
+    try{
+        data = {Request: request.body, Response: response};
+    }catch(ex){
+        data = JSON.stringify(ex);
+    }
+    response.status(200).send(data);
 });
 
 app.post('/webhook', async (request: Request, response: Response) => {
-    response.status(200).send({Request: request.body, Response: response});  
+
+    var data = {};
+    try{
+        data = {Request: request.body, Response: response};
+    }catch(ex){
+        data = JSON.stringify(ex);
+    }
+    response.status(200).send(data);
 });
 
 app.listen(port, () => {

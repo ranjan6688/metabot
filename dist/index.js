@@ -10,10 +10,24 @@ app.get('/', (request, response) => {
     return response.status(200).send("Welcome to METABOT");
 });
 app.get('/webhook', (request, response) => {
-    response.status(200).send({ Request: request.body, Response: response });
+    var data = {};
+    try {
+        data = { Request: request.body, Response: response };
+    }
+    catch (ex) {
+        data = JSON.stringify(ex);
+    }
+    response.status(200).send(data);
 });
 app.post('/webhook', async (request, response) => {
-    response.status(200).send({ Request: request.body, Response: response });
+    var data = {};
+    try {
+        data = { Request: request.body, Response: response };
+    }
+    catch (ex) {
+        data = JSON.stringify(ex);
+    }
+    response.status(200).send(data);
 });
 app.listen(port, () => {
     return console.log(`Server is listening on ${port}`);

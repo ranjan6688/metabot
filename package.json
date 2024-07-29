@@ -18,7 +18,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^4.19.2"
+    "@types/dotenv": "^8.2.0",
+    "@types/request": "^2.48.12",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

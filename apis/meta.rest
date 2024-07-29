@@ -1,0 +1,47 @@
+@metaURL=https://graph.facebook.com/v20.0/397080143485993/messages
+@accessToken=EAAMJURCnZCdsBOw9gZBZAD4BXZB7KB6Cnip9B2do1rVDsiKcgKhZAlZCsENGVW2iBlbzt7jm09VlQtYQm6hU2ZBxfC74DRdr0NRXBIFZBtReZBvkicrGpetC3YkEom7kpY6gqHEFLo5VXxUUjT9ZCB6glxDMVkabDSuuvGH6YrXZByqfEz5UwGhqHB2hPBBDYLwarOd5aeowswZCNehiWlxWjuQxij5yxoEZD
+
+### DEFAULT TEMPLATE
+POST {{metaURL}} HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+	"messaging_product": "whatsapp",
+	"to": "917809525145",
+	"type": "template",
+	"template": {
+		"name": "hello_world",
+		"language": {
+			"code": "en_US"
+		}
+	}
+}
+
+### ASK BOT TEMPLATE
+POST {{metaURL}} HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+	"messaging_product": "whatsapp",
+	"to": "917809525145",
+	"type": "template",
+	"template": {
+		"name": "askbot",
+		"language": {
+			"code": "en"
+		},
+       "components": [
+         {
+           "type": "body",
+           "parameters": [
+               {
+                   "type": "text",
+                   "text": "Hello individual"
+               }
+           ]
+         }
+       ]
+	}
+}

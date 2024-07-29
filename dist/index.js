@@ -64,25 +64,24 @@ app.get('/sendmsg', (req, res) => {
         return res.status(500).send(`Message not provided!`);
     sendMessage(recepient, message).then(response => res.status(200).send(response)).catch(error => res.status(500).send(error));
 });
-app.get('/webhook', (req, res) => {
-    var data = {};
-    try {
-        data = { Request: req.body, Response: res };
-    }
-    catch (ex) {
-        data = ex;
-    }
-    res.status(200).send(JSON.stringify(data));
+app.get('/incoming', (req, res) => {
+    // var data = {};
+    // try{
+    //     data = {Request: req.body, Response: res};
+    // }catch(ex){
+    //     data = ex;
+    // }
+    res.status(200).send(`Webhook[GET] hits`);
 });
-app.post('/webhook', async (req, res) => {
-    var data = {};
-    try {
-        data = { Request: req.body, Response: res };
-    }
-    catch (ex) {
-        data = ex;
-    }
-    res.status(200).send(JSON.stringify(data));
+app.post('/incoming', async (req, res) => {
+    // var data = {};
+    // try{
+    //     data = {Request: req.body, Response: res};
+    // }catch(ex){
+    //     data = ex;
+    // }
+    // res.status(200).send(JSON.stringify(data));
+    res.status(200).send(`Webhook[POST] hits`);
 });
 app.listen(port, () => {
     return console.log(`Server is listening on ${port}`);

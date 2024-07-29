@@ -79,9 +79,8 @@ app.get('/pushmsg', (req, res) => {
     // return res.status(200).send(`This is a recvmsg`);
 });
 app.post('/pushmsg', (req, res) => {
-    var _a, _b;
-    console.log((_a = req === null || req === void 0 ? void 0 : req.body) === null || _a === void 0 ? void 0 : _a.entry);
-    return res.status(200).send((_b = req === null || req === void 0 ? void 0 : req.body) === null || _b === void 0 ? void 0 : _b.entry);
+    console.log(req);
+    return res.status(200).send(req);
 });
 app.listen(port, () => {
     return console.log(`Server is listening on ${port}`);

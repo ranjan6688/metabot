@@ -92,7 +92,7 @@ app.get('/pushmsg', (req: Request, res: Response) => {
 });
 
 app.post('/pushmsg', (req: Request, res: Response) => {
-    console.log(req?.body);
+    console.log(req);
     return res.status(200).send(req?.body);
 });
 

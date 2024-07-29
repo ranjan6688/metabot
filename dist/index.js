@@ -79,7 +79,7 @@ app.get('/pushmsg', (req, res) => {
     // return res.status(200).send(`This is a recvmsg`);
 });
 app.post('/pushmsg', (req, res) => {
-    console.log(req === null || req === void 0 ? void 0 : req.body);
+    console.log(req);
     return res.status(200).send(req === null || req === void 0 ? void 0 : req.body);
 });
 app.listen(port, () => {

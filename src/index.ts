@@ -72,11 +72,28 @@ app.get('/sendmsg', (req: Request, res: Response) => {
 });
 
 app.get('/pushmsg', (req: Request, res: Response) => {
-    return res.status(200).send(`This is a recvmsg`);
+    
+    let mode = req.query["hub.mode"];
+    let challange = req.query["hub.challenge"];
+    let token = req.query["hub.verify_token"];
+
+
+    if (mode && token) {
+
+        if (mode === "subscribe" && token === process.env.META_VERIFY_TOKEN) {
+            return res.status(200).send(challange);
+        } else {
+            return res.status(403);
+        }
+
+    }
+
+    // return res.status(200).send(`This is a recvmsg`);
 });
 
 app.post('/pushmsg', (req: Request, res: Response) => {
-    return res.status(200).send(`This is a recvmsg`);
+    console.log(req?.body);
+    return res.status(200).send(req?.body);
 });
 
 app.listen(port, () => {

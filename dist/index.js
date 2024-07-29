@@ -65,10 +65,22 @@ app.get('/sendmsg', (req, res) => {
     sendMessage(recepient, message).then(response => res.status(200).send(response)).catch(error => res.status(500).send(error));
 });
 app.get('/pushmsg', (req, res) => {
-    return res.status(200).send(`This is a recvmsg`);
+    let mode = req.query["hub.mode"];
+    let challange = req.query["hub.challenge"];
+    let token = req.query["hub.verify_token"];
+    if (mode && token) {
+        if (mode === "subscribe" && token === process.env.META_VERIFY_TOKEN) {
+            return res.status(200).send(challange);
+        }
+        else {
+            return res.status(403);
+        }
+    }
+    // return res.status(200).send(`This is a recvmsg`);
 });
 app.post('/pushmsg', (req, res) => {
-    return res.status(200).send(`This is a recvmsg`);
+    console.log(req === null || req === void 0 ? void 0 : req.body);
+    return res.status(200).send(req === null || req === void 0 ? void 0 : req.body);
 });
 app.listen(port, () => {
     return console.log(`Server is listening on ${port}`);

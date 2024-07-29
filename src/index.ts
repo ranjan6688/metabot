@@ -61,7 +61,7 @@ function sendReplyMessage(from: string, msg: any){
 
     return new Promise((err:any, res: any) => {
         let options = {
-            url: `https://graph.facebook.com/v18.0/${from}/messages`,
+            url: `https://graph.facebook.com/v20.0/${from}/messages`,
             method: `POST`,
             headers: {
                 'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ function sendMarkAsRead(from: string, msg: any){
 
     return new Promise((err:any, res: any) => {
         let options = {
-            url: `https://graph.facebook.com/v18.0/${from}/messages`,
+            url: `https://graph.facebook.com/v20.0/${from}/messages`,
             method: `POST`,
             headers: {
                 'Content-Type': 'application/json',

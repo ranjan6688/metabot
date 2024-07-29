@@ -71,7 +71,7 @@ app.get('/incoming', (req, res) => {
     // }catch(ex){
     //     data = ex;
     // }
-    res.status(200).send(`Webhook[GET] hits`);
+    return res.status(200).send(`Webhook[GET] hits`);
 });
 app.post('/incoming', async (req, res) => {
     // var data = {};
@@ -81,7 +81,7 @@ app.post('/incoming', async (req, res) => {
     //     data = ex;
     // }
     // res.status(200).send(JSON.stringify(data));
-    res.status(200).send(`Webhook[POST] hits`);
+    return res.status(200).send(`Webhook[POST] hits`);
 });
 app.listen(port, () => {
     return console.log(`Server is listening on ${port}`);

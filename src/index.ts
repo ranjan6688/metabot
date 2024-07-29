@@ -79,7 +79,7 @@ app.get('/incoming', (req: Request, res: Response) => {
     // }catch(ex){
     //     data = ex;
     // }
-    res.status(200).send(`Webhook[GET] hits`);
+    return res.status(200).send(`Webhook[GET] hits`);
 });
 
 app.post('/incoming', async (req: Request, res: Response) => {
@@ -91,7 +91,7 @@ app.post('/incoming', async (req: Request, res: Response) => {
     //     data = ex;
     // }
     // res.status(200).send(JSON.stringify(data));
-    res.status(200).send(`Webhook[POST] hits`);
+    return res.status(200).send(`Webhook[POST] hits`);
 });
 
 app.listen(port, () => {

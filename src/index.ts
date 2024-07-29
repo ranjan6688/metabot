@@ -72,26 +72,11 @@ app.get('/sendmsg', (req: Request, res: Response) => {
 });
 
 app.get('/pushmsg', (req: Request, res: Response) => {
-
-    // var data = {};
-    // try{
-    //     data = {Request: req.body, Response: res};
-    // }catch(ex){
-    //     data = ex;
-    // }
-    return res.status(200).send(`pushmsg hits`);
+    return res.status(200).send(`This is a recvmsg`);
 });
 
-app.post('/incoming', async (req: Request, res: Response) => {
-
-    // var data = {};
-    // try{
-    //     data = {Request: req.body, Response: res};
-    // }catch(ex){
-    //     data = ex;
-    // }
-    // res.status(200).send(JSON.stringify(data));
-    return res.status(200).send(`Webhook[POST] hits`);
+app.post('/pushmsg', (req: Request, res: Response) => {
+    return res.status(200).send(`This is a recvmsg`);
 });
 
 app.listen(port, () => {

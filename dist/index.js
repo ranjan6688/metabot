@@ -65,23 +65,10 @@ app.get('/sendmsg', (req, res) => {
     sendMessage(recepient, message).then(response => res.status(200).send(response)).catch(error => res.status(500).send(error));
 });
 app.get('/pushmsg', (req, res) => {
-    // var data = {};
-    // try{
-    //     data = {Request: req.body, Response: res};
-    // }catch(ex){
-    //     data = ex;
-    // }
-    return res.status(200).send(`pushmsg hits`);
+    return res.status(200).send(`This is a recvmsg`);
 });
-app.post('/incoming', async (req, res) => {
-    // var data = {};
-    // try{
-    //     data = {Request: req.body, Response: res};
-    // }catch(ex){
-    //     data = ex;
-    // }
-    // res.status(200).send(JSON.stringify(data));
-    return res.status(200).send(`Webhook[POST] hits`);
+app.post('/pushmsg', (req, res) => {
+    return res.status(200).send(`This is a recvmsg`);
 });
 app.listen(port, () => {
     return console.log(`Server is listening on ${port}`);

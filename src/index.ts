@@ -71,7 +71,7 @@ app.get('/sendmsg', (req: Request, res: Response) => {
     sendMessage(recepient, message).then(response => res.status(200).send(response)).catch(error => res.status(500).send(error));
 });
 
-app.get('/incoming', (req: Request, res: Response) => {
+app.get('/pushmsg', (req: Request, res: Response) => {
 
     // var data = {};
     // try{
@@ -79,7 +79,7 @@ app.get('/incoming', (req: Request, res: Response) => {
     // }catch(ex){
     //     data = ex;
     // }
-    return res.status(200).send(`Webhook[GET] hits`);
+    return res.status(200).send(`pushmsg hits`);
 });
 
 app.post('/incoming', async (req: Request, res: Response) => {

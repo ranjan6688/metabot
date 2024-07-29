@@ -64,14 +64,14 @@ app.get('/sendmsg', (req, res) => {
         return res.status(500).send(`Message not provided!`);
     sendMessage(recepient, message).then(response => res.status(200).send(response)).catch(error => res.status(500).send(error));
 });
-app.get('/incoming', (req, res) => {
+app.get('/pushmsg', (req, res) => {
     // var data = {};
     // try{
     //     data = {Request: req.body, Response: res};
     // }catch(ex){
     //     data = ex;
     // }
-    return res.status(200).send(`Webhook[GET] hits`);
+    return res.status(200).send(`pushmsg hits`);
 });
 app.post('/incoming', async (req, res) => {
     // var data = {};

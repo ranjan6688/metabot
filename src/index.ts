@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import env from 'dotenv';
 import request from "request";
+import stringify = require("json-stringify-safe");
 
 env.config();
 
@@ -92,8 +93,8 @@ app.get('/pushmsg', (req: Request, res: Response) => {
 });
 
 app.post('/pushmsg', (req: Request, res: Response) => {
-    console.log(req);
-    return res.status(200).send(req);
+    console.log(stringify(req));
+    return res.status(200).send(stringify(req));
 });
 
 app.listen(port, () => {

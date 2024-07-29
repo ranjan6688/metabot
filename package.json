@@ -19,9 +19,11 @@
   "description": "",
   "dependencies": {
     "@types/dotenv": "^8.2.0",
+    "@types/json-stringify-safe": "^5.0.3",
     "@types/request": "^2.48.12",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "json-stringify-safe": "^5.0.1",
     "request": "^2.88.2"
   },
   "devDependencies": {

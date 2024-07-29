@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const request_1 = __importDefault(require("request"));
+const stringify = require("json-stringify-safe");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 8080;
@@ -79,8 +80,8 @@ app.get('/pushmsg', (req, res) => {
     // return res.status(200).send(`This is a recvmsg`);
 });
 app.post('/pushmsg', (req, res) => {
-    console.log(req);
-    return res.status(200).send(req);
+    console.log(stringify(req));
+    return res.status(200).send(stringify(req));
 });
 app.listen(port, () => {
     return console.log(`Server is listening on ${port}`);

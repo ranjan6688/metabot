@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const request_1 = __importDefault(require("request"));
-const stringify = require("json-stringify-safe");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 8080;
@@ -80,8 +79,26 @@ app.get('/pushmsg', (req, res) => {
     // return res.status(200).send(`This is a recvmsg`);
 });
 app.post('/pushmsg', (req, res) => {
-    console.log(stringify(req));
-    return res.status(200).send(stringify(req));
+    let body_param = req.body;
+    console.log(JSON.stringify(body_param, null, 2));
+    if (body_param.object) {
+        console.log("inside body param");
+        if (body_param.entry &&
+            body_param.entry[0].changes &&
+            body_param.entry[0].changes[0].value.messages &&
+            body_param.entry[0].changes[0].value.messages[0]) {
+            let phon_no_id = body_param.entry[0].changes[0].value.metadata.phone_number_id;
+            let from = body_param.entry[0].changes[0].value.messages[0].from;
+            let msg_body = body_param.entry[0].changes[0].value.messages[0].text.body;
+            console.log("phone number " + phon_no_id);
+            console.log("from " + from);
+            console.log("boady param " + msg_body);
+            sendMessage(phon_no_id, msg_body).then(response => res.status(200).send(response)).catch(error => res.status(500).send(error));
+        }
+        else {
+            res.sendStatus(404);
+        }
+    }
 });
 app.listen(port, () => {
     return console.log(`Server is listening on ${port}`);

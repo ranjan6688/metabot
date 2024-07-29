@@ -64,7 +64,7 @@ app.get('/sendmsg', (req, res) => {
         return res.status(500).send(`Message not provided!`);
     sendMessage(recepient, message).then(response => res.status(200).send(response)).catch(error => res.status(500).send(error));
 });
-app.get('/pushmsg', (req, res) => {
+app.get('/webhook', (req, res) => {
     let mode = req.query["hub.mode"];
     let challange = req.query["hub.challenge"];
     let token = req.query["hub.verify_token"];
@@ -78,7 +78,7 @@ app.get('/pushmsg', (req, res) => {
     }
     // return res.status(200).send(`This is a recvmsg`);
 });
-app.post('/pushmsg', (req, res) => {
+app.post('/webhook', (req, res) => {
     let body_param = req.body;
     console.log(JSON.stringify(body_param, null, 2));
     if (body_param.object) {

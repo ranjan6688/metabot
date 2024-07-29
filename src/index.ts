@@ -72,7 +72,7 @@ app.get('/sendmsg', (req: Request, res: Response) => {
     sendMessage(recepient, message).then(response => res.status(200).send(response)).catch(error => res.status(500).send(error));
 });
 
-app.get('/pushmsg', (req: Request, res: Response) => {
+app.get('/webhook', (req: Request, res: Response) => {
     
     let mode = req.query["hub.mode"];
     let challange = req.query["hub.challenge"];
@@ -92,7 +92,7 @@ app.get('/pushmsg', (req: Request, res: Response) => {
     // return res.status(200).send(`This is a recvmsg`);
 });
 
-app.post('/pushmsg', (req: Request, res: Response) => {
+app.post('/webhook', (req: Request, res: Response) => {
     let body_param=req.body;
 
     console.log(JSON.stringify(body_param,null,2));

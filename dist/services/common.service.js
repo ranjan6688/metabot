@@ -14,6 +14,7 @@ const api_service_1 = require("./api.service");
 const cc_service_1 = require("./cc.service");
 const express_service_1 = require("./express.service");
 const graphapi_controller_1 = require("./../controllers/graphapi.controller");
+const cc_controller_1 = require("./../controllers/cc.controller");
 class CommonService {
     /**
      * COMMON VARIABLES
@@ -30,6 +31,7 @@ class CommonService {
      * CONTROLLERS
      */
     graphApiController;
+    ccController;
     /**
      * SERVICES
      */
@@ -65,6 +67,7 @@ class CommonService {
         this.responseProcessor = new response_processor_1.ResponseProcessor(this);
         this.logger?.debug(`Initiating Controllers`);
         this.graphApiController = new graphapi_controller_1.GraphApiController(this);
+        this.ccController = new cc_controller_1.CCController(this);
         this.logger?.debug(`Initiating Services`);
         this.apiSvc = new api_service_1.APIService(this);
         this.ccSvc = new cc_service_1.CCService(this);

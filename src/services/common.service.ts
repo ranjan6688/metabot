@@ -8,6 +8,7 @@ import { APIService } from "./api.service";
 import { CCService } from "./cc.service";
 import { ExpressService } from "./express.service";
 import { GraphApiController } from "./../controllers/graphapi.controller";
+import { CCController } from "./../controllers/cc.controller";
 
 export class CommonService{
 
@@ -28,6 +29,7 @@ export class CommonService{
      * CONTROLLERS
      */
     public graphApiController!: GraphApiController;
+    public ccController!: CCController;
     
     /**
      * SERVICES
@@ -74,6 +76,7 @@ export class CommonService{
 
         this.logger?.debug(`Initiating Controllers`);
         this.graphApiController = new GraphApiController(this);
+        this.ccController = new CCController(this);
                                 
         this.logger?.debug(`Initiating Services`);
         this.apiSvc = new APIService(this);     

@@ -130,6 +130,9 @@ class RequestProcessor {
     processGraphApiGetWebHook = async (request, response) => {
         this.common.graphApiController.onWebhookGetMessageRecieved(request, response);
     };
+    processTestMessage = async (request, response) => {
+        this.common.graphApiController.onTestMessageRecieved(request, response);
+    };
     /**
      * LOG REQUEST
      * @param request

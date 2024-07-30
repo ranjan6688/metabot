@@ -185,7 +185,7 @@ export class CCService{
 
     }
 
-    fetchCTClient(sessionId: any, clientCode: string): Promise<HttpResult>{
+    fetchCTClient(sessionId: any, clientCode: any = undefined, limit: number = 25, offset: number = 0): Promise<HttpResult>{
 
         return new Promise((resolve: any) => {
 
@@ -194,6 +194,9 @@ export class CCService{
             var ccServer: CCServer = this.common.property.application.ccServer;
             var protocol: string = ccServer.isSsl === true ? 'https:' : 'http:';
             var domain: string = ccServer.ipAddress + (ccServer.port ? ':'+ccServer.port : '');
+            var filters: any = {};
+            if(clientCode)
+                filters.bycode = [clientCode];
 
             Request.Id++;
             let options = {
@@ -208,17 +211,15 @@ export class CCService{
                     ReqType: Request.Type.Config,
                     ReqCode: Request.Code.EntityFetch,
                     EntityName: "CTClient",
-                    Filters: {
-                        "bycode": [clientCode]
-                    },
+                    Filters: filters,
                     OrderBy: [
                         {
                             "Name": true
                         }
                     ],
                     IncludeCount: "true",
-                    Limit: 25,
-                    Offset: 0
+                    Limit: limit,
+                    Offset: offset
                 }
             };
     

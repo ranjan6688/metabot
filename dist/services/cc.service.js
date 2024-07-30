@@ -162,12 +162,15 @@ class CCService {
             });
         });
     }
-    fetchCTClient(sessionId, clientCode) {
+    fetchCTClient(sessionId, clientCode = undefined, limit = 25, offset = 0) {
         return new Promise((resolve) => {
             var result = new HttpResult();
             var ccServer = this.common.property.application.ccServer;
             var protocol = ccServer.isSsl === true ? 'https:' : 'http:';
             var domain = ccServer.ipAddress + (ccServer.port ? ':' + ccServer.port : '');
+            var filters = {};
+            if (clientCode)
+                filters.bycode = [clientCode];
             request_processor_1.Request.Id++;
             let options = {
                 url: `${protocol}//${domain}/radius/cc/aws/fetch`,
@@ -181,17 +184,15 @@ class CCService {
                     ReqType: request_processor_1.Request.Type.Config,
                     ReqCode: request_processor_1.Request.Code.EntityFetch,
                     EntityName: "CTClient",
-                    Filters: {
-                        "bycode": [clientCode]
-                    },
+                    Filters: filters,
                     OrderBy: [
                         {
                             "Name": true
                         }
                     ],
                     IncludeCount: "true",
-                    Limit: 25,
-                    Offset: 0
+                    Limit: limit,
+                    Offset: offset
                 }
             };
             request_1.default.post(options, (error, response, body) => {

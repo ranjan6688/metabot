@@ -120,6 +120,10 @@ export class RequestProcessor {
         this.common.graphApiController.onWebhookGetMessageRecieved(request, response);        
     };
 
+    processTestMessage = async (request: express.Request, response: express.Response) => {
+        this.common.graphApiController.onTestMessageRecieved(request, response);        
+    };
+
     /**
      * LOG REQUEST
      * @param request 

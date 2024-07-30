@@ -1,0 +1,7 @@
+### ASK BOT TEMPLATE
+POST http://localhost:10001/test HTTP/1.1
+content-type: application/json
+
+{
+	"text": "tenantlist"
+}

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Commands = exports.GraphApiController = void 0;
+exports.Commands = exports.Command = exports.GraphApiController = void 0;
 const axios_1 = __importDefault(require("axios"));
 class GraphApiController {
     common;
@@ -16,34 +16,38 @@ class GraphApiController {
         if (recievedMessageObj?.type === "text") {
             const businessNumber = request.body.entry?.[0].changes?.[0].value?.metadata?.phone_number_id;
             try {
-                if (recievedMessageObj?.text?.body?.trim()?.toLowerCase() === 'commandlist') {
-                    await this.onFetchCommandList(businessNumber, recievedMessageObj);
+                var command = this.getCommandFromMessage(recievedMessageObj?.text?.body?.trim(), response);
+                if (command) {
+                    switch (command?.name?.toLowerCase()) {
+                        case Commands.CommandList:
+                            var replyMessage = await this.fetchCommandList();
+                            await this.sendReplyMessage(businessNumber, recievedMessageObj, replyMessage);
+                            break;
+                        case Commands.TenantList:
+                            var replyMessage = await this.fetchTenantList();
+                            await this.sendReplyMessage(businessNumber, recievedMessageObj, replyMessage);
+                            break;
+                        case Commands.CampaignList:
+                            break;
+                        case Commands.CampaignInfo:
+                            break;
+                        case Commands.CampaignStatus:
+                            break;
+                        case Commands.StartCampaign:
+                            break;
+                        case Commands.StopCampaign:
+                            break;
+                        case Commands.LoadCampaign:
+                            break;
+                        case Commands.UnloadCampaign:
+                            break;
+                        default:
+                            await this.sendReplyMessage(businessNumber, recievedMessageObj, `<b>Invalid command!</b>`);
+                            break;
+                    }
                 }
                 else
                     await this.sendReplyMessage(businessNumber, recievedMessageObj, `<b>Invalid command!</b>`);
-                // var command: any = JSON.parse(recievedMessageObj?.text?.body?.trim());
-                // switch(command?.ReqCode){
-                //     case Commands.CommandList:
-                //         await this.onFetchCommandList(businessNumber, recievedMessageObj);
-                //         break;
-                //     case Commands.CampaignList:
-                //         break;
-                //     case Commands.CampaignInfo:
-                //         break;
-                //     case Commands.CampaignStatus:
-                //         break;
-                //     case Commands.StartCampaign:
-                //         break;
-                //     case Commands.StopCampaign:
-                //         break;
-                //     case Commands.LoadCampaign:
-                //         break;
-                //     case Commands.UnloadCampaign:
-                //         break;
-                //     default:
-                //         await this.sendReplyMessage(businessNumber, recievedMessageObj, `<b>Invalid command!</b>`);
-                //         break;
-                // }
             }
             catch (ex) {
                 await this.sendReplyMessage(businessNumber, recievedMessageObj, `<b>Invalid command!</b>`);
@@ -52,12 +56,82 @@ class GraphApiController {
         }
         response.sendStatus(200);
     }
-    async onFetchCommandList(businessNumber, recievedMessageObj) {
-        var replyMessage = Object.values(Commands).join('\n');
-        console.log(replyMessage);
-        await this.sendReplyMessage(businessNumber, recievedMessageObj, replyMessage);
+    async onTestMessageRecieved(request, response) {
+        var command = this.getCommandFromMessage(request?.body?.text?.trim(), response);
+        if (command) {
+            switch (command?.name?.toLowerCase()) {
+                case Commands.CommandList:
+                    var replyMessage = await this.fetchCommandList();
+                    response.status(200).send(replyMessage);
+                    break;
+                case Commands.TenantList:
+                    var replyMessage = await this.fetchTenantList();
+                    response.status(200).send(replyMessage);
+                    break;
+                case Commands.CampaignList:
+                    break;
+                case Commands.CampaignInfo:
+                    break;
+                case Commands.CampaignStatus:
+                    break;
+                case Commands.StartCampaign:
+                    break;
+                case Commands.StopCampaign:
+                    break;
+                case Commands.LoadCampaign:
+                    break;
+                case Commands.UnloadCampaign:
+                    break;
+                default:
+                    response.status(500).send(`<b>Invalid command!</b>`);
+                    break;
+            }
+        }
+    }
+    getCommandFromMessage(message, response) {
+        var messages = message?.split('|');
+        if (!messages || messages?.length === 0) {
+            response.status(500).send(`Invalid command!`);
+            return undefined;
+        }
+        // if(!messages[0]){
+        //     response.status(500).send(`Invalid entity name!`);
+        //     return undefined;
+        // }
+        // if(!messages[1]){
+        //     response.status(500).send(`Invalid tenant!`);
+        //     return undefined;
+        // }
+        // if(!messages[2]){
+        //     response.status(500).send(`Invalid entity id!`);
+        //     return undefined;
+        // }
+        var command = new Command();
+        command.name = messages[0];
+        command.tenant = messages[1];
+        command.id = messages[2];
+        return command;
+    }
+    async fetchCommandList() {
+        var replyMessage = Object.values(Commands);
+        replyMessage = replyMessage.filter(s => s.toLowerCase() !== 'commandlist');
+        return replyMessage.join('\n');
+    }
+    async fetchTenantList() {
+        var responseStringArray = [];
+        var keyValueStringArray = [];
+        var tenantInfos = await this.common.ccController.fetchTenants();
+        tenantInfos?.forEach((info) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        return replyMessage;
     }
     async onWebhookGetMessageRecieved(request, response) {
+        this.verifyWebhook(request, response);
+    }
+    verifyWebhook(request, response) {
         const mode = request.query["hub.mode"];
         const token = request.query["hub.verify_token"];
         const challenge = request.query["hub.challenge"];
@@ -105,17 +179,36 @@ class GraphApiController {
     }
     sendMessage() {
     }
+    getKeyValueStringArray(entity) {
+        var keyValueStringArray = [];
+        for (const [key, value] of Object.entries(entity)) {
+            if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
+                keyValueStringArray.push(`[${key}]\n${this.getKeyValueStringArray(value)}`);
+            }
+            else {
+                keyValueStringArray.push(`<b>${key}</b>:${value}`);
+            }
+        }
+        return keyValueStringArray;
+    }
 }
 exports.GraphApiController = GraphApiController;
+class Command {
+    tenant;
+    name;
+    id;
+}
+exports.Command = Command;
 var Commands;
 (function (Commands) {
-    Commands["CommandList"] = "CommandList";
-    Commands["CampaignList"] = "CampaignList";
-    Commands["CampaignInfo"] = "CampaignInfo";
-    Commands["CampaignStatus"] = "CampaignStatus";
-    Commands["StartCampaign"] = "StartCampaign";
-    Commands["StopCampaign"] = "StopCampaign";
-    Commands["LoadCampaign"] = "LoadCampaign";
-    Commands["UnloadCampaign"] = "UnloadCampaign";
+    Commands["CommandList"] = "commandlist";
+    Commands["TenantList"] = "tenantlist";
+    Commands["CampaignList"] = "campaignlist";
+    Commands["CampaignInfo"] = "campaigninfo";
+    Commands["CampaignStatus"] = "campaignstatus";
+    Commands["StartCampaign"] = "startcampaign";
+    Commands["StopCampaign"] = "stopcampaign";
+    Commands["LoadCampaign"] = "loadcampaign";
+    Commands["UnloadCampaign"] = "unloadcampaign";
 })(Commands || (exports.Commands = Commands = {}));
 //# sourceMappingURL=graphapi.controller.js.map

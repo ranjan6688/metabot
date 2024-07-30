@@ -44,5 +44,9 @@ export class APIService {
             this.common.requestProcessor.processGraphApiGetWebHook(request, response);
         });
         
+        router.post('/test', (request: express.Request, response: express.Response) => {
+            this.common.requestProcessor.processTestMessage(request, response);
+        });
+        
     }
 }

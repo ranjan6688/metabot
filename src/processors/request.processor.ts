@@ -113,69 +113,11 @@ export class RequestProcessor {
     }
 
     processGraphApiPostWebHook = async (request: express.Request, response: express.Response) => {
-
-        // log incoming messages
-        console.log("Incoming webhook message:", JSON.stringify(request.body, null, 2));
-
-        // check if the webhook request contains a message
-        // details on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
-        const message = request.body.entry?.[0]?.changes[0]?.value?.messages?.[0];
-
-        // check if the incoming message contains text
-        if (message?.type === "text") {
-            // extract the business number to send the reply from it
-            const business_phone_number_id =
-                request.body.entry?.[0].changes?.[0].value?.metadata?.phone_number_id;
-
-            // send a reply message as per the docs here https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages
-            await axios({
-                method: "POST",
-                url: `https://graph.facebook.com/v20.0/${business_phone_number_id}/messages`,
-                headers: {
-                    Authorization: `Bearer ${this.common.property.application.graphApi.authToken}`,
-                },
-                data: {
-                    messaging_product: "whatsapp",
-                    to: message.from,
-                    text: { body: "Echo: " + message.text.body },
-                    context: {
-                        message_id: message.id, // shows the message as a reply to the original user message
-                    },
-                },
-            });
-
-            // mark incoming message as read
-            await axios({
-                method: "POST",
-                url: `https://graph.facebook.com/v20.0/${business_phone_number_id}/messages`,
-                headers: {
-                    Authorization: `Bearer ${this.common.property.application.graphApi.authToken}`,
-                },
-                data: {
-                    messaging_product: "whatsapp",
-                    status: "read",
-                    message_id: message.id,
-                },
-            });
-        }
-
-        response.sendStatus(200);
+        this.common.graphApiController.onWebhookPostMessageRecieved(request, response);
     };
 
     processGraphApiGetWebHook = async (request: express.Request, response: express.Response) => {
-        const mode = request.query["hub.mode"];
-        const token = request.query["hub.verify_token"];
-        const challenge = request.query["hub.challenge"];
-      
-        // check the mode and token sent are correct
-        if (mode === "subscribe" && token === this.common.property.application.graphApi.verifyToken) {
-          // respond with 200 OK and challenge token from the request
-          response.status(200).send(challenge);
-          console.log("Webhook verified successfully!");
-        } else {
-          // respond with '403 Forbidden' if verify tokens do not match
-          response.sendStatus(403);
-        }
+        this.common.graphApiController.onWebhookGetMessageRecieved(request, response);        
     };
 
     /**

@@ -7,6 +7,7 @@ import { ConsoleLogOptions, FileLogOptions, LogAppender, LogConfig, LoggerServic
 import { APIService } from "./api.service";
 import { CCService } from "./cc.service";
 import { ExpressService } from "./express.service";
+import { GraphApiController } from "./../controllers/graphapi.controller";
 
 export class CommonService{
 
@@ -22,6 +23,11 @@ export class CommonService{
      */
     public requestProcessor!: RequestProcessor;
     public responseProcessor!: ResponseProcessor;
+
+    /**
+     * CONTROLLERS
+     */
+    public graphApiController!: GraphApiController;
     
     /**
      * SERVICES
@@ -65,6 +71,9 @@ export class CommonService{
                 
         this.logger?.debug(`Initiating Response Processor`);
         this.responseProcessor = new ResponseProcessor(this);
+
+        this.logger?.debug(`Initiating Controllers`);
+        this.graphApiController = new GraphApiController(this);
                                 
         this.logger?.debug(`Initiating Services`);
         this.apiSvc = new APIService(this);     

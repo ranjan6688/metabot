@@ -5,10 +5,67 @@ import { TenantInfo } from "./cc.controller";
 
 export class GraphApiController{
 
-    constructor(private common: CommonService){}
+    private commandList: CommandInfo[] = [];
+
+    constructor(private common: CommonService){
+        this.registerAllCommands();
+    }
+
+    private registerAllCommands(){
+        var cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.Application;
+        cmdInfo.actions = [CommandAction.Fetch];
+        this.commandList.push(cmdInfo);
+        
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.Callback;
+        cmdInfo.actions = [CommandAction.Fetch];
+        this.commandList.push(cmdInfo);
+        
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.Campaign;
+        cmdInfo.actions = [CommandAction.Fetch, CommandAction.Properties, CommandAction.Status, CommandAction.Load, CommandAction.Start, CommandAction.Stop, CommandAction.Unload];
+        this.commandList.push(cmdInfo);
+        
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.CampaignAbandonCallList;
+        cmdInfo.actions = [CommandAction.Fetch];
+        this.commandList.push(cmdInfo);
+        
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.CampaignDisposition;
+        cmdInfo.actions = [CommandAction.Fetch];
+        this.commandList.push(cmdInfo);
+        
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.ContactList;
+        cmdInfo.actions = [CommandAction.Fetch];
+        this.commandList.push(cmdInfo);
+        
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.Database;
+        cmdInfo.actions = [CommandAction.Fetch, CommandAction.Status];
+        this.commandList.push(cmdInfo);
+        
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.Skill;
+        cmdInfo.actions = [CommandAction.Fetch];
+        this.commandList.push(cmdInfo);
+        
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.Tenant;
+        cmdInfo.actions = [CommandAction.Fetch, CommandAction.Status];
+        this.commandList.push(cmdInfo);
+        
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.Help;
+        cmdInfo.actions = [];
+        this.commandList.push(cmdInfo);
+    }
 
     async onWebhookPostMessageRecieved(request: express.Request, response: express.Response){
 
+        var replyMessage = '';
         this.common.logger.debug("Incoming webhook message:", JSON.stringify(request.body, null, 2));
         
         const recievedMessageObj = request.body.entry?.[0]?.changes[0]?.value?.messages?.[0];        
@@ -20,48 +77,49 @@ export class GraphApiController{
 
                 var command: Command = await this.getCommandFromMessage(recievedMessageObj?.text?.body?.trim(), response);
                 if (command) {
-                    switch (command?.name?.toLowerCase()) {
-                        case Commands.CommandList:
-                            var replyMessage = await this.fetchCommandList();
-                            await this.sendReplyMessage(businessNumber, recievedMessageObj, replyMessage);
+
+
+                    switch (command?.entity?.toLowerCase()) {
+                        case CommandEntity.Help:
+                            replyMessage = await this.fetchCommandList();
                             break;
-                        case Commands.TenantList:
-                            var replyMessage = await this.fetchTenantList();
-                            await this.sendReplyMessage(businessNumber, recievedMessageObj, replyMessage);
+                        case CommandEntity.Application:
                             break;
-                        case Commands.TenantInfo:
-                            var replyMessage = await this.fetchTenantInfo(command?.code);
-                            await this.sendReplyMessage(businessNumber, recievedMessageObj, replyMessage);
+                        case CommandEntity.Callback:
                             break;
-                        case Commands.CampaignList:
+                        case CommandEntity.Campaign:
                             break;
-                        case Commands.CampaignInfo:
+                        case CommandEntity.CampaignAbandonCallList:
                             break;
-                        case Commands.CampaignStatus:
+                        case CommandEntity.CampaignDisposition:
                             break;
-                        case Commands.StartCampaign:
+                        case CommandEntity.ContactList:
                             break;
-                        case Commands.StopCampaign:
+                        case CommandEntity.Database:
                             break;
-                        case Commands.LoadCampaign:
+                        case CommandEntity.Skill:
                             break;
-                        case Commands.UnloadCampaign:
+                        case CommandEntity.Tenant:
+                            replyMessage = await this.onTenantCommandRecieved(command);
                             break;
                         default:
-                            var replyMessage = await this.fetchCommandListOnInvalidCommand();
-                            await this.sendReplyMessage(businessNumber, recievedMessageObj, `${replyMessage}`);
+                            replyMessage = await this.fetchCommandListOnInvalidCommand();
                             break;
                     }
+
+
                 }else{                    
-                    var replyMessage = await this.fetchCommandListOnInvalidCommand();
-                    await this.sendReplyMessage(businessNumber, recievedMessageObj, `${replyMessage}`);
+                    replyMessage = await this.fetchCommandListOnInvalidCommand();
                 }
 
             }catch(ex){                
-                var replyMessage = await this.fetchCommandListOnInvalidCommand();
-                await this.sendReplyMessage(businessNumber, recievedMessageObj, `${replyMessage}`);
+                replyMessage = await this.fetchCommandListOnInvalidCommand();
             }
 
+            if(!replyMessage)
+                replyMessage = await this.fetchCommandListOnInvalidCommand();
+
+            await this.sendReplyMessage(businessNumber, recievedMessageObj, replyMessage);
             await this.sendMarkAsRead(businessNumber, recievedMessageObj);
             
         }
@@ -69,36 +127,53 @@ export class GraphApiController{
         response.sendStatus(200);
     }
 
+    async onTenantCommandRecieved(command: Command){
+        var replyMessage = '';
+        if(command.action === CommandAction.Fetch){
+            if(!command.entityCode){
+                replyMessage = await this.fetchTenantList();
+            }else{                
+                replyMessage = await this.fetchTenantInfo(command?.entityCode);
+            }
+        }
+
+        if(!replyMessage){
+            replyMessage = await this.fetchCommandListOnInvalidCommand();
+        }
+
+        return replyMessage;
+    }
+
     async onTestMessageRecieved(request: express.Request, response: express.Response){
 
         var command: Command = await this.getCommandFromMessage(request?.body?.text?.trim(), response);
         if (command) {
-            switch (command?.name?.toLowerCase()) {
-                case Commands.CommandList:
+
+            
+            switch (command?.entity?.toLowerCase()) {
+                case CommandEntity.Help:
                     var replyMessage = await this.fetchCommandList();
                     response.status(200).send(replyMessage);
                     break;
-                case Commands.TenantList:
-                    var replyMessage = await this.fetchTenantList();
+                case CommandEntity.Application:
+                    break;
+                case CommandEntity.Callback:
+                    break;
+                case CommandEntity.Campaign:
+                    break;
+                case CommandEntity.CampaignAbandonCallList:
+                    break;
+                case CommandEntity.CampaignDisposition:
+                    break;
+                case CommandEntity.ContactList:
+                    break;
+                case CommandEntity.Database:
+                    break;
+                case CommandEntity.Skill:
+                    break;
+                case CommandEntity.Tenant:
+                    var replyMessage = await this.onTenantCommandRecieved(command);
                     response.status(200).send(replyMessage);
-                    break;
-                case Commands.TenantInfo:
-                    var replyMessage = await this.fetchTenantInfo(command?.code);
-                    response.status(200).send(replyMessage);
-                    break;
-                case Commands.CampaignList:
-                    break;
-                case Commands.CampaignInfo:
-                    break;
-                case Commands.CampaignStatus:
-                    break;
-                case Commands.StartCampaign:
-                    break;
-                case Commands.StopCampaign:
-                    break;
-                case Commands.LoadCampaign:
-                    break;
-                case Commands.UnloadCampaign:
                     break;
                 default:
                     var replyMessage = await this.fetchCommandListOnInvalidCommand();
@@ -112,45 +187,82 @@ export class GraphApiController{
     async getCommandFromMessage(message: string, response: express.Response){
         var messages = message?.split('|');
         if(!messages || messages?.length === 0){
-            var replyMessage = await this.fetchCommandList();
-            response.status(500).send(`*Invalid command!* Available command list are;\n${replyMessage}`);
+            var replyMessage = await this.fetchCommandListOnInvalidCommand();
+            response.status(500).send(replyMessage);
             return undefined;
         }
 
-        // if(!messages[0]){
-        //     response.status(500).send(`Invalid entity name!`);
-        //     return undefined;
-        // }
-
-        // if(!messages[2]){
-        //     response.status(500).send(`Invalid tenant!`);
-        //     return undefined;
-        // }
-
-        // if(!messages[1]){
-        //     response.status(500).send(`Invalid entity id!`);
-        //     return undefined;
-        // }
-
         var command = new Command();
-        command.name = messages[0];
-        command.code = messages[1];
-        command.tenant = messages[2];
+        command.entity = messages[0];
+        command.action = messages[1];
+        command.entityCode = messages[2];
+        command.tenantCode = messages[3];
         return command;
     }
 
     async fetchCommandListOnInvalidCommand(): Promise<string>{
-        var commands: any[] = Object.values(Commands);
-        commands = commands.filter(s => s.toLowerCase() !== 'commandlist');
-        commands = commands.map(command => `* ${command}`);
-        return `*Invalid command!*\nAvailable command list are;\n${commands.join('\n')}`;
+        var cmdArray: any[] = [];
+
+        this.commandList.forEach((command: CommandInfo) => {
+
+            if(command.name === CommandEntity.Help)
+                cmdArray.push(`*${command.name}*\ni.e.${command.name}`);
+
+            else if(command.name === CommandEntity.Application ||
+                command.name === CommandEntity.Database ||
+                command.name === CommandEntity.Tenant){
+                    var cmdStr = `*${command.name}*\ni.e.${command.name}`;
+                    if(command?.actions?.length > 0){
+                        cmdStr += `|[${command?.actions?.join(',')}]`
+                    }
+                    cmdArray.push(cmdStr);
+                }
+            
+            else{
+                var cmdStr = `*${command.name}*\ni.e.${command.name}`;
+                if(command?.actions?.length > 0){
+                    cmdStr += `|[${command?.actions?.join(',')}]`
+                }
+                cmdStr += `|${command.name}-code`;
+                cmdStr += `|tenant-code`;
+                cmdArray.push(cmdStr);
+            }
+        });
+
+        return `*Invalid command!*\nAvailable command list are;\n${cmdArray.join('\n')}`;
     }
 
     async fetchCommandList(): Promise<string>{
-        var commands: any[] = Object.values(Commands);
-        commands = commands.filter(s => s.toLowerCase() !== 'commandlist');
-        commands = commands.map(command => `* ${command}`);
-        return commands.join('\n');
+
+        var cmdArray: any[] = [];
+
+        this.commandList.forEach((command: CommandInfo) => {
+
+            if(command.name === CommandEntity.Help)
+                cmdArray.push(`*${command.name}*\ni.e.${command.name}`);
+
+            else if(command.name === CommandEntity.Application ||
+                command.name === CommandEntity.Database ||
+                command.name === CommandEntity.Tenant){
+                    var cmdStr = `*${command.name}*\ni.e.${command.name}`;
+                    if(command?.actions?.length > 0){
+                        cmdStr += `|[${command?.actions?.join(',')}]`
+                    }
+                    cmdArray.push(cmdStr);
+                }
+            
+            else{
+                var cmdStr = `*${command.name}*\ni.e.${command.name}`;
+                if(command?.actions?.length > 0){
+                    cmdStr += `|[${command?.actions?.join(',')}]`
+                }
+                cmdStr += `|${command.name}-code`;
+                cmdStr += `|tenant-code`;
+                cmdArray.push(cmdStr);
+            }
+        });
+
+        return cmdArray.join('\n');
     }
 
     async fetchTenantList(): Promise<string>{
@@ -265,9 +377,38 @@ export class GraphApiController{
 }
 
 export class Command{
-    tenant!: string;
+    entity!: string;
+    tenantCode!: string;
+    action!: string;
+    entityCode!: string;
+}
+
+export class CommandInfo{
     name!: string;
-    code!: string;
+    actions!: CommandAction[];
+}
+
+export enum CommandEntity{
+    Help = 'help',
+    Tenant = 'tenant',
+    Application = 'application',
+    Database = 'database',
+    Campaign = 'campaign',
+    CampaignDisposition = 'campaigndisposition',
+    Skill = 'skill',
+    Callback = 'callback',
+    ContactList = 'contactlist',
+    CampaignAbandonCallList = 'campaignabandoncalllist',
+}
+
+export enum CommandAction{
+    Fetch = 'fetch',
+    Start = 'start',
+    Stop = 'stop',
+    Load = 'load',
+    Unload = 'unload',
+    Properties = 'properties',
+    Status = 'status'
 }
 
 export enum Commands{

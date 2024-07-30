@@ -326,6 +326,7 @@ export var Request = {
         RegisterService: "RegisterService",
         PullRtEvents: "PullRtEvents",
         EntityFetch: "EntityFetch",
+        CTClientStatFetch: "CTClientStatFetch",
         AbandonCallFetch: "AbandonCallFetch",
         CallAbandonCancel: "CallAbandonCancel"
     },

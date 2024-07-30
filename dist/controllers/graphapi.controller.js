@@ -189,12 +189,13 @@ class GraphApiController {
         var keyValueStringArray = [];
         for (const [key, value] of Object.entries(entity)) {
             if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
-                keyValueStringArray.push(`*_[${key}]_*`);
+                keyValueStringArray.push(`\n*_[${key}]_*`);
                 var subArray = this.getKeyValueStringArray(value);
                 keyValueStringArray = [...keyValueStringArray, ...subArray];
             }
             else {
-                if (key?.toLowerCase() !== 'id')
+                if (key?.toLowerCase() !== 'id' &&
+                    !key?.toLowerCase().includes('password'))
                     keyValueStringArray.push(`*${key}*: ${value}`);
             }
         }

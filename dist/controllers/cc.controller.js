@@ -21,7 +21,7 @@ class CCController {
             if (result?.ResultType === cc_service_1.HttpResultType.Success) {
                 result = await this.common.ccSvc.fetchCTClient(sessionId);
                 if (result?.ResultType === cc_service_1.HttpResultType.Success) {
-                    result?.Response?.Entities?.forEach((entity) => {
+                    await Promise.all(result?.Response?.Entities?.map(async (entity) => {
                         var tenantInfo = new TenantInfo();
                         tenantInfo.Address = entity.Address;
                         tenantInfo.DatabaseName = entity?.CTClientDB?.Name;
@@ -41,7 +41,18 @@ class CCController {
                             tenantInfo.MemDB.Username = entity?.CTClientDB?.MemDB?.DB1UserName;
                             tenantInfo.MemDB.Password = entity?.CTClientDB?.MemDB?.DB1Password;
                         }
+                        result = await this.common.ccSvc.fetchCTClientStatus(sessionId, entity.Id);
+                        if (result?.ResultType === cc_service_1.HttpResultType.Failed)
+                            this.common.logger.error(result.Exception);
+                        else {
+                            if (result?.Response?.CTClientState) {
+                                tenantInfo.Status = result?.Response?.CTClientState?.toLowerCase() === 'start' ? 'Running' : 'Not running';
+                            }
+                        }
                         tenantInfos.push(tenantInfo);
+                        tenantInfos = [...new Map(tenantInfos.map(item => [item['Id'], item])).values()];
+                    }));
+                    result?.Response?.Entities?.forEach((entity) => {
                     });
                 }
                 else {
@@ -64,6 +75,7 @@ class TenantInfo {
     Name;
     Address;
     DatabaseName;
+    Status;
     CoreDB;
     MemDB;
 }

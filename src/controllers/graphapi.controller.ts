@@ -93,8 +93,8 @@ export class GraphApiController{
                 case Commands.UnloadCampaign:
                     break;
                 default:
-                    var replyMessage = await this.fetchCommandList();
-                    response.status(500).send(`*Invalid command!* Available command list are;\n${replyMessage}`);
+                    var replyMessage = await this.fetchCommandListOnInvalidCommand();
+                    response.status(500).send(replyMessage);
                     break;
             }
         }
@@ -134,18 +134,14 @@ export class GraphApiController{
     async fetchCommandListOnInvalidCommand(): Promise<string>{
         var commands: any[] = Object.values(Commands);
         commands = commands.filter(s => s.toLowerCase() !== 'commandlist');
-        commands.forEach((command: any) => {
-            command = `* ${command}`;
-        });
+        commands = commands.map(command => `* ${command}`);
         return `*Invalid command!*\nAvailable command list are;\n${commands.join('\n')}`;
     }
 
     async fetchCommandList(): Promise<string>{
         var commands: any[] = Object.values(Commands);
         commands = commands.filter(s => s.toLowerCase() !== 'commandlist');
-        commands.forEach((command: any) => {
-            command = `*${command}`;
-        });
+        commands = commands.map(command => `* ${command}`);
         return commands.join('\n');
     }
 

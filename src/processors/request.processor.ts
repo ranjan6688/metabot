@@ -155,7 +155,7 @@ export class RequestProcessor {
             client.ApplicationCode = `RADIUSClient`;
             client.ClientCode = `SYS`;
             client.Username = common.property.application.ccServer.suLoginId;
-            client.Password = common.property.application.ccServer.suPassword;
+            client.Password = common.chipherSvc.AESdecrypt(common.property.application.ccServer.suPassword);
 
             response = await common.ccSvc.login(sessionId, client);            
             console.log(`CC LOGGED IN`, response);

@@ -9,6 +9,7 @@ import { CCService } from "./cc.service";
 import { ExpressService } from "./express.service";
 import { GraphApiController } from "./../controllers/graphapi.controller";
 import { CCController } from "./../controllers/cc.controller";
+import { CipherService } from "./cipher.service";
 
 export class CommonService{
 
@@ -37,6 +38,7 @@ export class CommonService{
     public apiSvc!: APIService;
     public expressSvc !: ExpressService;
     public ccSvc!: CCService;
+    public chipherSvc!: CipherService;
 
     /**
      * LOGGER
@@ -81,6 +83,7 @@ export class CommonService{
         this.logger?.debug(`Initiating Services`);
         this.apiSvc = new APIService(this);     
         this.ccSvc = new CCService(this);
+        this.chipherSvc = new CipherService();
         this.expressSvc = new ExpressService(this);
         this.expressSvc.init();
 

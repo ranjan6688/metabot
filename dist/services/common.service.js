@@ -15,6 +15,7 @@ const cc_service_1 = require("./cc.service");
 const express_service_1 = require("./express.service");
 const graphapi_controller_1 = require("./../controllers/graphapi.controller");
 const cc_controller_1 = require("./../controllers/cc.controller");
+const cipher_service_1 = require("./cipher.service");
 class CommonService {
     /**
      * COMMON VARIABLES
@@ -38,6 +39,7 @@ class CommonService {
     apiSvc;
     expressSvc;
     ccSvc;
+    chipherSvc;
     /**
      * LOGGER
      */
@@ -71,6 +73,7 @@ class CommonService {
         this.logger?.debug(`Initiating Services`);
         this.apiSvc = new api_service_1.APIService(this);
         this.ccSvc = new cc_service_1.CCService(this);
+        this.chipherSvc = new cipher_service_1.CipherService();
         this.expressSvc = new express_service_1.ExpressService(this);
         this.expressSvc.init();
     }

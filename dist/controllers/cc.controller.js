@@ -16,7 +16,7 @@ class CCController {
             client.ApplicationCode = `RADIUSClient`;
             client.ClientCode = `SYS`;
             client.Username = this.common.property.application.ccServer.suLoginId;
-            client.Password = this.common.property.application.ccServer.suPassword;
+            client.Password = this.common.chipherSvc.AESdecrypt(this.common.property.application.ccServer.suPassword);
             result = await this.common.ccSvc.login(sessionId, client);
             if (result?.ResultType === cc_service_1.HttpResultType.Success) {
                 result = await this.common.ccSvc.fetchCTClient(sessionId);

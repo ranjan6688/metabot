@@ -209,7 +209,8 @@ export class GraphApiController{
 
             if(typeof value === 'object' && !Array.isArray(value) && value !== null){
                 keyValueStringArray.push(`[${key}]`);
-                keyValueStringArray.concat(this.getKeyValueStringArray(value));
+                var subArray = this.getKeyValueStringArray(value);
+                keyValueStringArray = [...keyValueStringArray, ...subArray];
 
             }else{
                 keyValueStringArray.push(`*${key}*: ${value}`);

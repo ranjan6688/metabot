@@ -27,6 +27,7 @@ class CCController {
                         tenantInfo.DatabaseName = entity?.CTClientDB?.Name;
                         tenantInfo.Id = entity.Id;
                         tenantInfo.Name = entity.Name;
+                        tenantInfo.Code = entity.Code;
                         if (entity?.CTClientDB?.CoreDB) {
                             tenantInfo.CoreDB = new TenantDBInfo();
                             tenantInfo.CoreDB.Host = entity?.CTClientDB?.CoreDB?.DB1Host;
@@ -73,6 +74,7 @@ exports.CCController = CCController;
 class TenantInfo {
     Id;
     Name;
+    Code;
     Address;
     DatabaseName;
     Status;

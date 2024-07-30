@@ -42,16 +42,19 @@ class GraphApiController {
                         case Commands.UnloadCampaign:
                             break;
                         default:
-                            var replyMessage = await this.fetchCommandList();
-                            await this.sendReplyMessage(businessNumber, recievedMessageObj, `*Invalid command!* Available command list are;\n${replyMessage}`);
+                            var replyMessage = await this.fetchCommandListOnInvalidCommand();
+                            await this.sendReplyMessage(businessNumber, recievedMessageObj, `${replyMessage}`);
                             break;
                     }
                 }
-                else
-                    await this.sendReplyMessage(businessNumber, recievedMessageObj, `*Invalid command!* Available command list are;\n${replyMessage}`);
+                else {
+                    var replyMessage = await this.fetchCommandListOnInvalidCommand();
+                    await this.sendReplyMessage(businessNumber, recievedMessageObj, `${replyMessage}`);
+                }
             }
             catch (ex) {
-                await this.sendReplyMessage(businessNumber, recievedMessageObj, `*Invalid command!* Available command list are;\n${replyMessage}`);
+                var replyMessage = await this.fetchCommandListOnInvalidCommand();
+                await this.sendReplyMessage(businessNumber, recievedMessageObj, `${replyMessage}`);
             }
             await this.sendMarkAsRead(businessNumber, recievedMessageObj);
         }
@@ -112,8 +115,16 @@ class GraphApiController {
         var command = new Command();
         command.name = messages[0];
         command.tenant = messages[1];
-        command.id = messages[2];
+        command.code = messages[2];
         return command;
+    }
+    async fetchCommandListOnInvalidCommand() {
+        var commands = Object.values(Commands);
+        commands = commands.filter(s => s.toLowerCase() !== 'commandlist');
+        commands.forEach((command) => {
+            command = `* ${command}`;
+        });
+        return `*Invalid command!*\nAvailable command list are;\n${commands.join('\n')}`;
     }
     async fetchCommandList() {
         var commands = Object.values(Commands);
@@ -206,7 +217,7 @@ exports.GraphApiController = GraphApiController;
 class Command {
     tenant;
     name;
-    id;
+    code;
 }
 exports.Command = Command;
 var Commands;

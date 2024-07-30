@@ -44,15 +44,18 @@ export class GraphApiController{
                         case Commands.UnloadCampaign:
                             break;
                         default:
-                            var replyMessage = await this.fetchCommandList();
-                            await this.sendReplyMessage(businessNumber, recievedMessageObj, `*Invalid command!* Available command list are;\n${replyMessage}`);
+                            var replyMessage = await this.fetchCommandListOnInvalidCommand();
+                            await this.sendReplyMessage(businessNumber, recievedMessageObj, `${replyMessage}`);
                             break;
                     }
-                }else
-                    await this.sendReplyMessage(businessNumber, recievedMessageObj, `*Invalid command!* Available command list are;\n${replyMessage}`);
+                }else{                    
+                    var replyMessage = await this.fetchCommandListOnInvalidCommand();
+                    await this.sendReplyMessage(businessNumber, recievedMessageObj, `${replyMessage}`);
+                }
 
-            }catch(ex){
-                await this.sendReplyMessage(businessNumber, recievedMessageObj, `*Invalid command!* Available command list are;\n${replyMessage}`);
+            }catch(ex){                
+                var replyMessage = await this.fetchCommandListOnInvalidCommand();
+                await this.sendReplyMessage(businessNumber, recievedMessageObj, `${replyMessage}`);
             }
 
             await this.sendMarkAsRead(businessNumber, recievedMessageObj);
@@ -124,8 +127,17 @@ export class GraphApiController{
         var command = new Command();
         command.name = messages[0];
         command.tenant = messages[1];
-        command.id = messages[2];
+        command.code = messages[2];
         return command;
+    }
+
+    async fetchCommandListOnInvalidCommand(): Promise<string>{
+        var commands: any[] = Object.values(Commands);
+        commands = commands.filter(s => s.toLowerCase() !== 'commandlist');
+        commands.forEach((command: any) => {
+            command = `* ${command}`;
+        });
+        return `*Invalid command!*\nAvailable command list are;\n${commands.join('\n')}`;
     }
 
     async fetchCommandList(): Promise<string>{
@@ -232,7 +244,7 @@ export class GraphApiController{
 export class Command{
     tenant!: string;
     name!: string;
-    id!: string;
+    code!: string;
 }
 
 export enum Commands{

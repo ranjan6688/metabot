@@ -183,10 +183,11 @@ class GraphApiController {
         var keyValueStringArray = [];
         for (const [key, value] of Object.entries(entity)) {
             if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
-                keyValueStringArray.push(`[${key}]\n${this.getKeyValueStringArray(value)}`);
+                keyValueStringArray.push(`[${key}]`);
+                keyValueStringArray.concat(this.getKeyValueStringArray(value));
             }
             else {
-                keyValueStringArray.push(`<b>${key}</b>:${value}`);
+                keyValueStringArray.push(`*${key}*: ${value}`);
             }
         }
         return keyValueStringArray;

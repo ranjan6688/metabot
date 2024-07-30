@@ -48,6 +48,7 @@ class CommonService {
     async initialize() {
         console.log(`ABANDON >>> COMMON SERVICE >>> Initiating Property Service and Reading Properties`);
         this.property = new property_service_1.PropertyService().getProperties();
+        console.log(`ABANDON >>> COMMON SERVICE >>> Properties`, this.property);
         console.log(`ABANDON >>> COMMON SERVICE >>> Initiating Logger Service`);
         this.logger = new logger_service_1.LoggerService();
         console.log(`ABANDON >>> COMMON SERVICE >>> Initiating Application Logger`);

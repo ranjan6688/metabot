@@ -195,7 +195,7 @@ class GraphApiController {
             }
             else {
                 if (key?.toLowerCase() !== 'id')
-                    keyValueStringArray.push(`--*${key}*: ${value}`);
+                    keyValueStringArray.push(`*${key}*: ${value}`);
             }
         }
         return keyValueStringArray;

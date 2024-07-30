@@ -1,16 +1,13 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
 
 import express from "express";
 import axios from "axios";
+import env from 'dotenv';
+
+env.config();
 
 const app = express();
 app.use(express.json());
-
+const port = process.env.PORT || 8080;
 const { WEBHOOK_VERIFY_TOKEN, GRAPH_API_TOKEN, PORT } = process.env;
 
 app.post("/webhook", async (req, res) => {
@@ -88,3 +85,6 @@ Checkout README.md to start.</pre>`);
 app.listen(PORT, () => {
   console.log(`Server is listening on port: ${PORT}`);
 });
+
+
+// module.exports = app;

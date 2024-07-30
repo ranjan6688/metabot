@@ -185,7 +185,7 @@ export class CCService{
 
     }
 
-    fetchCTClient(sessionId: any, clientCode: any = undefined, limit: number = 25, offset: number = 0): Promise<HttpResult>{
+    fetchCTClient(sessionId: any, tenantCode: any = undefined, limit: number = 25, offset: number = 0): Promise<HttpResult>{
 
         return new Promise((resolve: any) => {
 
@@ -195,8 +195,8 @@ export class CCService{
             var protocol: string = ccServer.isSsl === true ? 'https:' : 'http:';
             var domain: string = ccServer.ipAddress + (ccServer.port ? ':'+ccServer.port : '');
             var filters: any = {};
-            if(clientCode)
-                filters.bycode = [clientCode];
+            if(tenantCode)
+                filters.bycode = [tenantCode];
 
             Request.Id++;
             let options = {
@@ -255,7 +255,7 @@ export class CCService{
 
     }
 
-    fetchCTClientStatus(sessionId: any, clientId: any): Promise<HttpResult>{
+    fetchCTClientStatus(sessionId: any, tenantId: any): Promise<HttpResult>{
 
         return new Promise((resolve: any) => {
 
@@ -277,7 +277,7 @@ export class CCService{
                     ReqId: Request.Id,
                     ReqType: Request.Type.Control,
                     ReqCode: Request.Code.CTClientStatFetch,
-                    CTClientId: clientId?.toString(),
+                    CTClientId: tenantId?.toString(),
                 }
             };
     

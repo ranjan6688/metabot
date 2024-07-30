@@ -27,6 +27,10 @@ class GraphApiController {
                             var replyMessage = await this.fetchTenantList();
                             await this.sendReplyMessage(businessNumber, recievedMessageObj, replyMessage);
                             break;
+                        case Commands.TenantInfo:
+                            var replyMessage = await this.fetchTenantInfo(command?.code);
+                            await this.sendReplyMessage(businessNumber, recievedMessageObj, replyMessage);
+                            break;
                         case Commands.CampaignList:
                             break;
                         case Commands.CampaignInfo:
@@ -72,6 +76,10 @@ class GraphApiController {
                     var replyMessage = await this.fetchTenantList();
                     response.status(200).send(replyMessage);
                     break;
+                case Commands.TenantInfo:
+                    var replyMessage = await this.fetchTenantInfo(command?.code);
+                    response.status(200).send(replyMessage);
+                    break;
                 case Commands.CampaignList:
                     break;
                 case Commands.CampaignInfo:
@@ -104,18 +112,18 @@ class GraphApiController {
         //     response.status(500).send(`Invalid entity name!`);
         //     return undefined;
         // }
-        // if(!messages[1]){
+        // if(!messages[2]){
         //     response.status(500).send(`Invalid tenant!`);
         //     return undefined;
         // }
-        // if(!messages[2]){
+        // if(!messages[1]){
         //     response.status(500).send(`Invalid entity id!`);
         //     return undefined;
         // }
         var command = new Command();
         command.name = messages[0];
-        command.tenant = messages[1];
-        command.code = messages[2];
+        command.code = messages[1];
+        command.tenant = messages[2];
         return command;
     }
     async fetchCommandListOnInvalidCommand() {
@@ -139,6 +147,21 @@ class GraphApiController {
             responseStringArray.push(keyValueStringArray.join('\n'));
         });
         var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if (!replyMessage)
+            replyMessage = `No tenants found`;
+        return replyMessage;
+    }
+    async fetchTenantInfo(tenantCode) {
+        var responseStringArray = [];
+        var keyValueStringArray = [];
+        var tenantInfos = await this.common.ccController.fetchTenant(tenantCode);
+        tenantInfos?.forEach((info) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if (!replyMessage)
+            replyMessage = `No tenant found`;
         return replyMessage;
     }
     async onWebhookGetMessageRecieved(request, response) {
@@ -220,6 +243,7 @@ var Commands;
 (function (Commands) {
     Commands["CommandList"] = "commandlist";
     Commands["TenantList"] = "tenantlist";
+    Commands["TenantInfo"] = "tenantinfo";
     Commands["CampaignList"] = "campaignlist";
     Commands["CampaignInfo"] = "campaigninfo";
     Commands["CampaignStatus"] = "campaignstatus";

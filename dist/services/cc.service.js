@@ -162,15 +162,15 @@ class CCService {
             });
         });
     }
-    fetchCTClient(sessionId, clientCode = undefined, limit = 25, offset = 0) {
+    fetchCTClient(sessionId, tenantCode = undefined, limit = 25, offset = 0) {
         return new Promise((resolve) => {
             var result = new HttpResult();
             var ccServer = this.common.property.application.ccServer;
             var protocol = ccServer.isSsl === true ? 'https:' : 'http:';
             var domain = ccServer.ipAddress + (ccServer.port ? ':' + ccServer.port : '');
             var filters = {};
-            if (clientCode)
-                filters.bycode = [clientCode];
+            if (tenantCode)
+                filters.bycode = [tenantCode];
             request_processor_1.Request.Id++;
             let options = {
                 url: `${protocol}//${domain}/radius/cc/aws/fetch`,
@@ -222,7 +222,7 @@ class CCService {
             });
         });
     }
-    fetchCTClientStatus(sessionId, clientId) {
+    fetchCTClientStatus(sessionId, tenantId) {
         return new Promise((resolve) => {
             var result = new HttpResult();
             var ccServer = this.common.property.application.ccServer;
@@ -240,7 +240,7 @@ class CCService {
                     ReqId: request_processor_1.Request.Id,
                     ReqType: request_processor_1.Request.Type.Control,
                     ReqCode: request_processor_1.Request.Code.CTClientStatFetch,
-                    CTClientId: clientId?.toString(),
+                    CTClientId: tenantId?.toString(),
                 }
             };
             request_1.default.post(options, (error, response, body) => {

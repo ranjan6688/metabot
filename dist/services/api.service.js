@@ -28,7 +28,7 @@ class APIService {
      * @param router
      */
     intializeWebHooks(router) {
-        router.post('/', (request, response) => {
+        router.get('/', (request, response) => {
             response.send(`<pre>Nothing to see here. Checkout README.md to start.</pre>`);
         });
         router.post('/webhook', (request, response) => {

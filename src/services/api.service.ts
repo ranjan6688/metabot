@@ -32,7 +32,7 @@ export class APIService {
      */
     public intializeWebHooks(router: any) {
 
-        router.post('/', (request: express.Request, response: express.Response) => {
+        router.get('/', (request: express.Request, response: express.Response) => {
             response.send(`<pre>Nothing to see here. Checkout README.md to start.</pre>`);
         });
                 

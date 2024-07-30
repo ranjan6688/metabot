@@ -37,9 +37,6 @@ class APIService {
         router.get('/webhook', (request, response) => {
             this.common.requestProcessor.processGraphApiGetWebHook(request, response);
         });
-        router.post('/api/log', (request, response) => {
-            this.common.requestProcessor.processLogRequest(request, response);
-        });
     }
 }
 exports.APIService = APIService;

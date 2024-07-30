@@ -16,7 +16,7 @@ class GraphApiController {
         if (recievedMessageObj?.type === "text") {
             const businessNumber = request.body.entry?.[0].changes?.[0].value?.metadata?.phone_number_id;
             try {
-                var command = this.getCommandFromMessage(recievedMessageObj?.text?.body?.trim(), response);
+                var command = await this.getCommandFromMessage(recievedMessageObj?.text?.body?.trim(), response);
                 if (command) {
                     switch (command?.name?.toLowerCase()) {
                         case Commands.CommandList:
@@ -42,22 +42,23 @@ class GraphApiController {
                         case Commands.UnloadCampaign:
                             break;
                         default:
-                            await this.sendReplyMessage(businessNumber, recievedMessageObj, `<b>Invalid command!</b>`);
+                            var replyMessage = await this.fetchCommandList();
+                            await this.sendReplyMessage(businessNumber, recievedMessageObj, `*Invalid command!* Available command list are;\n${replyMessage}`);
                             break;
                     }
                 }
                 else
-                    await this.sendReplyMessage(businessNumber, recievedMessageObj, `<b>Invalid command!</b>`);
+                    await this.sendReplyMessage(businessNumber, recievedMessageObj, `*Invalid command!* Available command list are;\n${replyMessage}`);
             }
             catch (ex) {
-                await this.sendReplyMessage(businessNumber, recievedMessageObj, `<b>Invalid command!</b>`);
+                await this.sendReplyMessage(businessNumber, recievedMessageObj, `*Invalid command!* Available command list are;\n${replyMessage}`);
             }
             await this.sendMarkAsRead(businessNumber, recievedMessageObj);
         }
         response.sendStatus(200);
     }
     async onTestMessageRecieved(request, response) {
-        var command = this.getCommandFromMessage(request?.body?.text?.trim(), response);
+        var command = await this.getCommandFromMessage(request?.body?.text?.trim(), response);
         if (command) {
             switch (command?.name?.toLowerCase()) {
                 case Commands.CommandList:
@@ -83,15 +84,17 @@ class GraphApiController {
                 case Commands.UnloadCampaign:
                     break;
                 default:
-                    response.status(500).send(`<b>Invalid command!</b>`);
+                    var replyMessage = await this.fetchCommandList();
+                    response.status(500).send(`*Invalid command!* Available command list are;\n${replyMessage}`);
                     break;
             }
         }
     }
-    getCommandFromMessage(message, response) {
+    async getCommandFromMessage(message, response) {
         var messages = message?.split('|');
         if (!messages || messages?.length === 0) {
-            response.status(500).send(`Invalid command!`);
+            var replyMessage = await this.fetchCommandList();
+            response.status(500).send(`*Invalid command!* Available command list are;\n${replyMessage}`);
             return undefined;
         }
         // if(!messages[0]){
@@ -113,9 +116,12 @@ class GraphApiController {
         return command;
     }
     async fetchCommandList() {
-        var replyMessage = Object.values(Commands);
-        replyMessage = replyMessage.filter(s => s.toLowerCase() !== 'commandlist');
-        return replyMessage.join('\n');
+        var commands = Object.values(Commands);
+        commands = commands.filter(s => s.toLowerCase() !== 'commandlist');
+        commands.forEach((command) => {
+            command = `*${command}`;
+        });
+        return commands.join('\n');
     }
     async fetchTenantList() {
         var responseStringArray = [];
@@ -183,12 +189,13 @@ class GraphApiController {
         var keyValueStringArray = [];
         for (const [key, value] of Object.entries(entity)) {
             if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
-                keyValueStringArray.push(`[${key}]`);
+                keyValueStringArray.push(`*_[${key}]_*`);
                 var subArray = this.getKeyValueStringArray(value);
                 keyValueStringArray = [...keyValueStringArray, ...subArray];
             }
             else {
-                keyValueStringArray.push(`*${key}*: ${value}`);
+                if (key?.toLowerCase() !== 'id')
+                    keyValueStringArray.push(`--*${key}*: ${value}`);
             }
         }
         return keyValueStringArray;

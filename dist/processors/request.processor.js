@@ -145,6 +145,22 @@ class RequestProcessor {
         var serverResponse = { RemoteAddress: requestInfo?.remoteAddress, RemotePort: requestInfo?.remotePort, Status: "Success" };
         return response.json(serverResponse);
     };
+    processEncryptRequest = async (request, response) => {
+        this.printLog(this.common.logger, request);
+        var queryText = request?.query?.text;
+        if (!queryText)
+            return response.status(500).send('Invalid input!');
+        var encryptedText = this.common.chipherSvc.AESencrypt(queryText);
+        return response.status(200).send(encryptedText);
+    };
+    processDecryptRequest = async (request, response) => {
+        this.printLog(this.common.logger, request);
+        var queryText = request?.query?.text;
+        if (!queryText)
+            return response.status(500).send('Invalid input!');
+        var encryptedText = this.common.chipherSvc.AESdecrypt(queryText);
+        return response.status(200).send(encryptedText);
+    };
     async getDefaultAdmin(clientCode, common, serverResponse) {
         var result = await common.ccSvc.register();
         result = await this.onCCRegistered(clientCode, result, common, serverResponse);
@@ -307,6 +323,8 @@ exports.Request = {
         PullRtEvents: "PullRtEvents",
         EntityFetch: "EntityFetch",
         CTClientStatFetch: "CTClientStatFetch",
+        CTClientStart: "CTClientStart",
+        CTClientStop: "CTClientStop",
         AbandonCallFetch: "AbandonCallFetch",
         CallAbandonCancel: "CallAbandonCancel"
     },

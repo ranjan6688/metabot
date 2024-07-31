@@ -54,7 +54,7 @@ export class GraphApiController{
         
         cmdInfo = new CommandInfo();
         cmdInfo.name = CommandEntity.Tenant;
-        cmdInfo.actions = [CommandAction.Fetch, CommandAction.Status];
+        cmdInfo.actions = [CommandAction.Fetch, CommandAction.Status, CommandAction.Start, CommandAction.Stop];
         this.commandList.push(cmdInfo);
         
         cmdInfo = new CommandInfo();
@@ -137,6 +137,30 @@ export class GraphApiController{
             }
         }
 
+        if(command.action === CommandAction.Status){
+            if(!command.entityCode)
+                replyMessage = `Invalid tenant code!`;
+            else{                
+                replyMessage = await this.fetchTenantStatus(command?.entityCode);
+            }
+        }
+
+        if(command.action === CommandAction.Start){            
+            if(!command.entityCode)
+                replyMessage = `Invalid tenant code!`;
+            else{                
+                replyMessage = await this.startTenant(command?.entityCode);
+            }
+        }
+
+        if(command.action === CommandAction.Stop){                 
+            if(!command.entityCode)
+                replyMessage = `Invalid tenant code!`;
+            else{                
+                replyMessage = await this.stopTenant(command?.entityCode);
+            }
+        }
+
         if(!replyMessage){
             replyMessage = await this.fetchCommandListOnInvalidCommand();
         }
@@ -213,8 +237,9 @@ export class GraphApiController{
                 command.name === CommandEntity.Tenant){
                     var cmdStr = `*${command.name}*\ni.e. ${command.name}`;
                     if(command?.actions?.length > 0){
-                        cmdStr += ` | [${command?.actions?.join(',')}]\n`
+                        cmdStr += ` | [${command?.actions?.join(',')}]`
                     }
+                    cmdStr += ` | ${command.name}-code\n`;
                     cmdArray.push(cmdStr);
                 }
             
@@ -246,8 +271,9 @@ export class GraphApiController{
                 command.name === CommandEntity.Tenant){
                     var cmdStr = `*${command.name}*\ni.e. ${command.name}`;
                     if(command?.actions?.length > 0){
-                        cmdStr += ` | [${command?.actions?.join(',')}]\n`
+                        cmdStr += ` | [${command?.actions?.join(',')}]`
                     }
+                    cmdStr += ` | ${command.name}-code\n`;
                     cmdArray.push(cmdStr);
                 }
             
@@ -299,6 +325,57 @@ export class GraphApiController{
         return replyMessage;
     }
 
+    async fetchTenantStatus(tenantCode: any): Promise<string>{
+
+        var responseStringArray: any[] = [];
+        var keyValueStringArray: any[] = [];
+
+        var tenantInfos: TenantInfo[] = await this.common.ccController.fetchTenant(tenantCode);
+        tenantInfos?.forEach((info: TenantInfo) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if(!replyMessage)
+            replyMessage = `No tenant found`;
+        return replyMessage;
+    }
+
+    async startTenant(tenantCode: any): Promise<string>{
+
+        var responseStringArray: any[] = [];
+        var keyValueStringArray: any[] = [];
+
+        var tenantInfos: TenantInfo[] = await this.common.ccController.startTenant(tenantCode);
+        tenantInfos?.forEach((info: TenantInfo) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if(!replyMessage)
+            replyMessage = `No tenant found`;
+        return replyMessage;
+    }
+
+    async stopTenant(tenantCode: any): Promise<string>{
+
+        var responseStringArray: any[] = [];
+        var keyValueStringArray: any[] = [];
+
+        var tenantInfos: TenantInfo[] = await this.common.ccController.stopTenant(tenantCode);
+        tenantInfos?.forEach((info: TenantInfo) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if(!replyMessage)
+            replyMessage = `No tenant found`;
+        return replyMessage;
+    }
+
     async onWebhookGetMessageRecieved(request: express.Request, response: express.Response){
         this.verifyWebhook(request, response);
     }
@@ -309,7 +386,7 @@ export class GraphApiController{
         const challenge = request.query["hub.challenge"];
       
         // check the mode and token sent are correct
-        if (mode === "subscribe" && token === this.common.property.application.graphApi.verifyToken) {
+        if (mode === "subscribe" && token === this.common.chipherSvc.AESdecrypt(this.common.property.application.graphApi.verifyToken)) {
           // respond with 200 OK and challenge token from the request
           response.status(200).send(challenge);
           console.log("Webhook verified successfully!");

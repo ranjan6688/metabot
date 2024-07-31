@@ -139,6 +139,28 @@ export class RequestProcessor {
         return response.json(serverResponse);
     };
 
+    processEncryptRequest = async (request: express.Request, response: express.Response) => {
+
+        this.printLog(this.common.logger, request);
+        
+        var queryText: any = request?.query?.text;
+        if(!queryText)
+            return response.status(500).send('Invalid input!');
+        var encryptedText = this.common.chipherSvc.AESencrypt(queryText);
+        return response.status(200).send(encryptedText);
+    };
+
+    processDecryptRequest = async (request: express.Request, response: express.Response) => {
+
+        this.printLog(this.common.logger, request);
+        
+        var queryText: any = request?.query?.text;
+        if(!queryText)
+            return response.status(500).send('Invalid input!');
+        var encryptedText = this.common.chipherSvc.AESdecrypt(queryText);
+        return response.status(200).send(encryptedText);
+    };
+
     private async getDefaultAdmin(clientCode: string, common: CommonService, serverResponse: any): Promise<any>{
         var result = await common.ccSvc.register();
         result = await this.onCCRegistered(clientCode, result, common, serverResponse);
@@ -327,6 +349,8 @@ export var Request = {
         PullRtEvents: "PullRtEvents",
         EntityFetch: "EntityFetch",
         CTClientStatFetch: "CTClientStatFetch",
+        CTClientStart: "CTClientStart",
+        CTClientStop: "CTClientStop",
         AbandonCallFetch: "AbandonCallFetch",
         CallAbandonCancel: "CallAbandonCancel"
     },

@@ -22,6 +22,12 @@ class APIService {
         router.post('/api/log', (request, response) => {
             this.common.requestProcessor.processLogRequest(request, response);
         });
+        router.get('/api/encrypt', (request, response) => {
+            this.common.requestProcessor.processEncryptRequest(request, response);
+        });
+        router.get('/api/decrypt', (request, response) => {
+            this.common.requestProcessor.processDecryptRequest(request, response);
+        });
     }
     /**
      * INITIATES WEBHOOKS

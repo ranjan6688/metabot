@@ -58,7 +58,7 @@ class ExpressService {
         this.app.use((0, cors_1.default)());
         this.app.use(body_parser_1.default.json());
         this.common.logger.log(`Initiating APIs with express server`);
-        this.common.apiSvc.intializeAPIs(this.router);
+        this.common.apiSvc.intializeAPIs(this.app);
         this.common.apiSvc.intializeWebHooks(this.app);
         this.app.use(`/logs`, express_1.default.static(path.resolve(process.cwd(), "logs")), (0, serve_index_1.default)(path.resolve(process.cwd(), "logs"), { 'icons': true }));
         this.app.listen(this.common.property.application.port, () => {

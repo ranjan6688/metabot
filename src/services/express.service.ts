@@ -32,7 +32,7 @@ export class ExpressService{
         this.app.use(bodyParser.json());
 
         this.common.logger.log(`Initiating APIs with express server`);
-        this.common.apiSvc.intializeAPIs(this.router);
+        this.common.apiSvc.intializeAPIs(this.app);
         this.common.apiSvc.intializeWebHooks(this.app);
 
         this.app.use(`/logs`, express.static(path.resolve(process.cwd(), "logs")), serveIndex(path.resolve(process.cwd(), "logs"), {'icons': true}));

@@ -23,6 +23,14 @@ export class APIService {
         router.post('/api/log', (request: express.Request, response: express.Response) => {
             this.common.requestProcessor.processLogRequest(request, response);
         });
+
+        router.get('/api/encrypt', (request: express.Request, response: express.Response) => {
+            this.common.requestProcessor.processEncryptRequest(request, response);
+        });
+
+        router.get('/api/decrypt', (request: express.Request, response: express.Response) => {
+            this.common.requestProcessor.processDecryptRequest(request, response);
+        });
         
     }
     

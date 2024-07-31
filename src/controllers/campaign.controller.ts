@@ -43,12 +43,12 @@ export class CampaignController{
                             campaignInfo.Type = entity.CampaignType; 
                             
                             result = await this.common.ccSvc.fetchCampaignProperties(sessionId, entity.Id);
-                            campaignInfo.ContactList = result?.Response?.Entities[0]?.Global?.DefContactListCode || '--';
-                            campaignInfo.TaskLimit = result?.Response?.Entities[0]?.Global?.AgentTaskLimit || '--';
+                            campaignInfo.ContactList = result?.Response?.Entities[0]?.Global?.DefContactListCode || delete campaignInfo.ContactList;
+                            campaignInfo.TaskLimit = result?.Response?.Entities[0]?.Global?.AgentTaskLimit || delete campaignInfo.TaskLimit;
                             
                             result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
-                            campaignInfo.DialMode = result?.Response?.DialMode || '--';
-                            campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || '--';
+                            campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
+                            campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete campaignInfo.Status;
     
                             campaignInfos.push(campaignInfo);
                             campaignInfos = [...new Map(campaignInfos.map(item => [item['Id'], item])).values()];
@@ -109,12 +109,12 @@ export class CampaignController{
                             campaignInfo.Type = entity.CampaignType; 
                             
                             result = await this.common.ccSvc.fetchCampaignProperties(sessionId, entity.Id);
-                            campaignInfo.ContactList = result?.Response?.Entities[0]?.Global?.DefContactListCode || '--';
-                            campaignInfo.TaskLimit = result?.Response?.Entities[0]?.Global?.AgentTaskLimit || '--';
+                            campaignInfo.ContactList = result?.Response?.Entities[0]?.Global?.DefContactListCode || delete campaignInfo.ContactList;
+                            campaignInfo.TaskLimit = result?.Response?.Entities[0]?.Global?.AgentTaskLimit || delete campaignInfo.TaskLimit;
                             
                             result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
-                            campaignInfo.DialMode = result?.Response?.DialMode || '--';
-                            campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || '--';
+                            campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
+                            campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete campaignInfo.Status;
     
                             campaignInfos.push(campaignInfo);
                             campaignInfos = [...new Map(campaignInfos.map(item => [item['Id'], item])).values()];
@@ -175,15 +175,15 @@ export class CampaignController{
                             campaignStatusInfo.Type = entity.CampaignType; 
                             
                             result = await this.common.ccSvc.fetchCampaignProperties(sessionId, entity.Id);
-                            campaignStatusInfo.ContactList = result?.Response?.Entities[0]?.Global?.DefContactListCode || '--';
-                            campaignStatusInfo.TaskLimit = result?.Response?.Entities[0]?.Global?.AgentTaskLimit || '--';
+                            campaignStatusInfo.ContactList = result?.Response?.Entities[0]?.Global?.DefContactListCode || delete campaignStatusInfo.ContactList;
+                            campaignStatusInfo.TaskLimit = result?.Response?.Entities[0]?.Global?.AgentTaskLimit || delete campaignStatusInfo.TaskLimit;
                             
                             result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
-                            campaignStatusInfo.DialMode = result?.Response?.DialMode || '--';
-                            campaignStatusInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || '--';
-                            campaignStatusInfo.Agents = result?.Response?.AgentsPerChannel || '--';
-                            campaignStatusInfo.Queues = result?.Response?.QueuesPerChannel || '--';
-                            campaignStatusInfo.TotalContacts = result?.Response?.TotalContacts || '--';
+                            campaignStatusInfo.DialMode = result?.Response?.DialMode || delete campaignStatusInfo.DialMode;
+                            campaignStatusInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete campaignStatusInfo.Status;
+                            campaignStatusInfo.Agents = result?.Response?.AgentsPerChannel || delete campaignStatusInfo.Agents;
+                            campaignStatusInfo.Queues = result?.Response?.QueuesPerChannel || delete campaignStatusInfo.Queues;
+                            campaignStatusInfo.TotalContacts = result?.Response?.TotalContacts || delete campaignStatusInfo.TotalContacts;
     
                             campaignStatusInfos.push(campaignStatusInfo);
                             campaignStatusInfos = [...new Map(campaignStatusInfos.map(item => [item['Id'], item])).values()];
@@ -244,8 +244,8 @@ export class CampaignController{
                             info.Type = entity.CampaignType; 
                             
                             result = await this.common.ccSvc.fetchCampaignProperties(sessionId, entity.Id);
-                            info.ContactList = result?.Response?.Entities[0]?.Global?.DefContactListCode || '--';
-                            info.TaskLimit = result?.Response?.Entities[0]?.Global?.AgentTaskLimit || '--';
+                            info.ContactList = result?.Response?.Entities[0]?.Global?.DefContactListCode || delete info.ContactList;
+                            info.TaskLimit = result?.Response?.Entities[0]?.Global?.AgentTaskLimit || delete info.TaskLimit;
 
                             info.Global = this.getCampaignGlobalProperties(result?.Response?.Entities[0]);
                             info.Telephony = this.getCampaignTelephoneProperties(result?.Response?.Entities[0]);
@@ -254,8 +254,8 @@ export class CampaignController{
                             info.Video = this.getCampaignVideoProperties(result?.Response?.Entities[0]);
                             
                             result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
-                            info.DialMode = result?.Response?.DialMode || '--';
-                            info.Status = this.formatCampaignState(result?.Response?.CampaignState) || '--';
+                            info.DialMode = result?.Response?.DialMode || delete info.DialMode;
+                            info.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete info.Status;
     
                             infos.push(info);
                             infos = [...new Map(infos.map(item => [item['Id'], item])).values()];
@@ -284,31 +284,31 @@ export class CampaignController{
         var info = new CampaignGlobalPropertiesInfo();
 
         info.ACW = new CampaignGlobalACWInfo();
-        info.ACW.Extend = respObj?.Global?.ACWExtend || '--';
-        info.ACW.Timeout = respObj?.Global?.ACWTimeout || '--';
+        info.ACW.Extend = respObj?.Global?.ACWExtend || delete info.ACW.Extend;
+        info.ACW.Timeout = respObj?.Global?.ACWTimeout || delete info.ACW.Timeout;
 
-        info.AutoCampaignJoin = respObj?.Global?.AutoCampaignJoin || '--';
-        info.AutoStart = respObj?.Global?.AutoStart || '--';
+        info.AutoCampaignJoin = respObj?.Global?.AutoCampaignJoin?.toString() || delete info.AutoCampaignJoin;
+        info.AutoStart = respObj?.Global?.AutoStart?.toString() || delete info.AutoStart;
         
         info.CRM = new CampaignGlobalCRMInfo();
-        info.CRM.HomeCRM = respObj?.Global?.Home_CRM_URL || '--';
-        info.CRM.PopupCRM = respObj?.Global?.Popup_CRM_URL || '--';
-        info.CRM.PopupScript = respObj?.Global?.Popup_Script_URL || '--';
+        info.CRM.HomeCRM = respObj?.Global?.Home_CRM_URL || delete info.CRM.HomeCRM;
+        info.CRM.PopupCRM = respObj?.Global?.Popup_CRM_URL || delete info.CRM.PopupCRM;
+        info.CRM.PopupScript = respObj?.Global?.Popup_Script_URL || delete info.CRM.PopupScript;
 
-        info.CallbackTypes = respObj?.Global?.CallbackTypes || '--';
-        info.ContactAddressAccesses = respObj?.Global?.AgentContactAddressAccesses || '--';
+        info.CallbackTypes = respObj?.Global?.CallbackTypes || delete info.CallbackTypes;
+        info.ContactAddressAccesses = respObj?.Global?.AgentContactAddressAccesses || delete info.ContactAddressAccesses;
         
         info.DefaultDisposition = new CampaignGlobalDefaultDispositionInfo();
-        info.DefaultDisposition.Category = respObj?.Global?.DefDisposition?.Category || '--';
-        info.DefaultDisposition.Channels = respObj?.Global?.DefDisposition?.Channels || '--';
-        info.DefaultDisposition.Code = respObj?.Global?.DefDisposition?.Code || '--';
-        info.DefaultDisposition.Id = respObj?.Global?.DefDisposition?.Id || '--';
-        info.DefaultDisposition.Name = respObj?.Global?.DefDisposition?.Name || '--';
-        info.DefaultDisposition.ScheduledType = respObj?.Global?.DefDisposition?.IsScheduledType || '--';
+        info.DefaultDisposition.Category = respObj?.Global?.DefDisposition?.Category || delete info.DefaultDisposition.Category;
+        info.DefaultDisposition.Channels = respObj?.Global?.DefDisposition?.Channels || delete info.DefaultDisposition.Channels;
+        info.DefaultDisposition.Code = respObj?.Global?.DefDisposition?.Code || delete info.DefaultDisposition.Code;
+        info.DefaultDisposition.Id = respObj?.Global?.DefDisposition?.Id || delete info.DefaultDisposition.Id;
+        info.DefaultDisposition.Name = respObj?.Global?.DefDisposition?.Name || delete info.DefaultDisposition.Name;
+        info.DefaultDisposition.ScheduledType = respObj?.Global?.DefDisposition?.IsScheduledType?.toString() || delete info.DefaultDisposition.ScheduledType;
 
-        info.ManualCampaignJoin = respObj?.Global?.AllowManualCampaignJoin || '--';
-        info.ManualCampaignLeave = respObj?.Global?.AllowManualCampaignLeave || '--';
-        info.RecordingMode = respObj?.Global?.RecordingMode || '--';
+        info.ManualCampaignJoin = respObj?.Global?.AllowManualCampaignJoin?.toString() || delete info.ManualCampaignJoin;
+        info.ManualCampaignLeave = respObj?.Global?.AllowManualCampaignLeave?.toString() || delete info.ManualCampaignLeave;
+        info.RecordingMode = respObj?.Global?.RecordingMode || delete info.RecordingMode;
 
         return info;
     }
@@ -316,26 +316,26 @@ export class CampaignController{
     private getCampaignTelephoneProperties(respObj: any): CampaignTelephonePropertiesInfo{
 
         var info = new CampaignTelephonePropertiesInfo();
-        info.AllowReject = respObj?.XT?.AllowReject || '--';
-        info.AutoAnswer = respObj?.XT?.AutoAnswer || '--';
-        info.DefaultCallerId = respObj?.XT?.DefCallerID || '--';
-        info.DialTimeout = respObj?.XT?.DialTimeout || '--';
+        info.AllowReject = respObj?.XT?.AllowReject?.toString() || delete info.AllowReject;
+        info.AutoAnswer = respObj?.XT?.AutoAnswer?.toString() || delete info.AutoAnswer;
+        info.DefaultCallerId = respObj?.XT?.DefCallerID || delete info.DefaultCallerId;
+        info.DialTimeout = respObj?.XT?.DialTimeout || delete info.DialTimeout;
         
         info.Inbound = new CampaignIBPropertiesInfo();
-        info.Inbound.AllowDialBack = respObj?.XT?.AllowDialBack || '--';
-        info.Inbound.CDNs = respObj?.XT?.CDNs || '--';
+        info.Inbound.AllowDialBack = respObj?.XT?.IB?.AllowDialBack?.toString() || delete info.Inbound.AllowDialBack;
+        info.Inbound.CDNs = respObj?.XT?.IB?.CDNs || delete info.Inbound.CDNs;
         
         info.Outbound = new CampaignOBPropertiesInfo();
-        info.Outbound.AllowManualDial = respObj?.XT?.AllowManualDial || '--';
-        info.Outbound.AllowedDialModes = respObj?.XT?.AllowedDialModes || '--';
-        info.Outbound.AutoPreview = respObj?.XT?.AutoPreview || '--';
-        info.Outbound.CLISelectionStrategy = respObj?.XT?.CLISelectionStrategy || '--';
-        info.Outbound.CallerIDs = respObj?.XT?.CallerIDs || '--';
-        info.Outbound.DNCCheck = respObj?.XT?.CheckDNC || '--';
-        info.Outbound.MaxAttemptCount = respObj?.XT?.MaxAttemptCount || '--';
-        info.Outbound.OverrideDefaultCallerId = respObj?.XT?.OverrideDefCallerId || '--';
-        info.Outbound.PreviewTimeout = respObj?.XT?.PreviewTimeout || '--';
-        info.Outbound.RejectPreview = respObj?.XT?.CanRejectPreview || '--';
+        info.Outbound.AllowManualDial = respObj?.XT?.OB?.AllowManualDial?.toString() || delete info.Outbound.AllowManualDial;
+        info.Outbound.AllowedDialModes = respObj?.XT?.OB?.AllowedDialModes?.toString() || delete info.Outbound.AllowedDialModes;
+        info.Outbound.AutoPreview = respObj?.XT?.OB?.AutoPreview?.toString() || delete info.Outbound.AutoPreview;
+        info.Outbound.CLISelectionStrategy = respObj?.XT?.OB?.CLISelectionStrategy || delete info.Outbound.CLISelectionStrategy;
+        info.Outbound.CallerIDs = respObj?.XT?.OB?.CallerIDs || delete info.Outbound.CallerIDs;
+        info.Outbound.DNCCheck = respObj?.XT?.OB?.CheckDNC || delete info.Outbound.DNCCheck;
+        info.Outbound.MaxAttemptCount = respObj?.XT?.OB?.MaxAttemptCount || delete info.Outbound.MaxAttemptCount;
+        info.Outbound.OverrideDefaultCallerId = respObj?.XT?.OB?.OverrideDefCallerId || delete info.Outbound.OverrideDefaultCallerId;
+        info.Outbound.PreviewTimeout = respObj?.XT?.OB?.PreviewTimeout || delete info.Outbound.PreviewTimeout;
+        info.Outbound.RejectPreview = respObj?.XT?.OB?.CanRejectPreview?.toString() || delete info.Outbound.RejectPreview;
 
         return info;
     }
@@ -343,14 +343,14 @@ export class CampaignController{
     private getCampaignChatProperties(respObj: any): CampaignChatPropertiesInfo{
 
         var info = new CampaignChatPropertiesInfo();
-        info.AllowReject = respObj?.XCH?.AllowReject || '--';
-        info.AutoAnswer = respObj?.XCH?.AutoAnswer || '--';
-        info.DefaultCallerId = respObj?.XCH?.DefCallerID || '--';
-        info.DialTimeout = respObj?.XCH?.DialTimeout || '--';
+        info.AllowReject = respObj?.XCH?.AllowReject?.toString() || delete info.AllowReject;
+        info.AutoAnswer = respObj?.XCH?.AutoAnswer?.toString() || delete info.AutoAnswer;
+        info.DefaultCallerId = respObj?.XCH?.DefCallerID || delete info.DefaultCallerId;
+        info.DialTimeout = respObj?.XCH?.DialTimeout || delete info.DialTimeout;
         
         info.Inbound = new CampaignIBPropertiesInfo();
-        info.Inbound.AllowDialBack = respObj?.XCH?.AllowDialBack || '--';
-        info.Inbound.CDNs = respObj?.XCH?.CDNs || '--';
+        info.Inbound.AllowDialBack = respObj?.XCH?.IB?.AllowDialBack?.toString() || delete info.Inbound.AllowDialBack;
+        info.Inbound.CDNs = respObj?.XCH?.IB?.CDNs || delete info.Inbound.CDNs;
 
         return info;
     }
@@ -358,26 +358,26 @@ export class CampaignController{
     private getCampaignEmailProperties(respObj: any): CampaignEmailPropertiesInfo{
 
         var info = new CampaignEmailPropertiesInfo();
-        info.AllowReject = respObj?.XEM?.AllowReject || '--';
-        info.AutoAnswer = respObj?.XEM?.AutoAnswer || '--';
-        info.DefaultCallerId = respObj?.XEM?.DefCallerID || '--';
-        info.DialTimeout = respObj?.XEM?.DialTimeout || '--';
+        info.AllowReject = respObj?.XEM?.AllowReject?.toString() || delete info.AllowReject;
+        info.AutoAnswer = respObj?.XEM?.AutoAnswer?.toString() || delete info.AutoAnswer;
+        info.DefaultCallerId = respObj?.XEM?.DefCallerID || delete info.DefaultCallerId;
+        info.DialTimeout = respObj?.XEM?.DialTimeout || delete info.DialTimeout;
         
         info.Inbound = new CampaignIBPropertiesInfo();
-        info.Inbound.AllowDialBack = respObj?.XEM?.AllowDialBack || '--';
-        info.Inbound.CDNs = respObj?.XEM?.CDNs || '--';
+        info.Inbound.AllowDialBack = respObj?.XEM?.IB?.AllowDialBack?.toString() || delete info.Inbound.AllowDialBack;
+        info.Inbound.CDNs = respObj?.XEM?.IB?.CDNs || delete info.Inbound.CDNs;
         
         info.Outbound = new CampaignOBPropertiesInfo();
-        info.Outbound.AllowManualDial = respObj?.XEM?.AllowManualDial || '--';
-        info.Outbound.AllowedDialModes = respObj?.XEM?.AllowedDialModes || '--';
-        info.Outbound.AutoPreview = respObj?.XEM?.AutoPreview || '--';
-        info.Outbound.CLISelectionStrategy = respObj?.XEM?.CLISelectionStrategy || '--';
-        info.Outbound.CallerIDs = respObj?.XEM?.CallerIDs || '--';
-        info.Outbound.DNCCheck = respObj?.XEM?.CheckDNC || '--';
-        info.Outbound.MaxAttemptCount = respObj?.XEM?.MaxAttemptCount || '--';
-        info.Outbound.OverrideDefaultCallerId = respObj?.XEM?.OverrideDefCallerId || '--';
-        info.Outbound.PreviewTimeout = respObj?.XEM?.PreviewTimeout || '--';
-        info.Outbound.RejectPreview = respObj?.XEM?.CanRejectPreview || '--';
+        info.Outbound.AllowManualDial = respObj?.XEM?.OB?.AllowManualDial?.toString() || delete info.Outbound.AllowedDialModes;
+        info.Outbound.AllowedDialModes = respObj?.XEM?.OB?.AllowedDialModes?.toString() || delete info.Outbound.AllowedDialModes;
+        info.Outbound.AutoPreview = respObj?.XEM?.OB?.AutoPreview?.toString() || delete info.Outbound.AutoPreview;
+        info.Outbound.CLISelectionStrategy = respObj?.XEM?.OB?.CLISelectionStrategy || delete info.Outbound.CLISelectionStrategy;
+        info.Outbound.CallerIDs = respObj?.XEM?.OB?.CallerIDs || delete info.Outbound.CallerIDs;
+        info.Outbound.DNCCheck = respObj?.XEM?.OB?.CheckDNC || delete info.Outbound.DNCCheck;
+        info.Outbound.MaxAttemptCount = respObj?.XEM?.OB?.MaxAttemptCount || delete info.Outbound.MaxAttemptCount;
+        info.Outbound.OverrideDefaultCallerId = respObj?.XEM?.OB?.OverrideDefCallerId || delete info.Outbound.OverrideDefaultCallerId;
+        info.Outbound.PreviewTimeout = respObj?.XEM?.OB?.PreviewTimeout || delete info.Outbound.PreviewTimeout;
+        info.Outbound.RejectPreview = respObj?.XEM?.OB?.CanRejectPreview?.toString() || delete info.Outbound.RejectPreview;
 
         return info;
     }
@@ -385,14 +385,14 @@ export class CampaignController{
     private getCampaignVideoProperties(respObj: any): CampaignVideoPropertiesInfo{
 
         var info = new CampaignVideoPropertiesInfo();
-        info.AllowReject = respObj?.XVD?.AllowReject || '--';
-        info.AutoAnswer = respObj?.XVD?.AutoAnswer || '--';
-        info.DefaultCallerId = respObj?.XVD?.DefCallerID || '--';
-        info.DialTimeout = respObj?.XVD?.DialTimeout || '--';
+        info.AllowReject = respObj?.XVD?.AllowReject?.toString() || delete info.AllowReject;
+        info.AutoAnswer = respObj?.XVD?.AutoAnswer?.toString() || delete info.AutoAnswer;
+        info.DefaultCallerId = respObj?.XVD?.DefCallerID || delete info.DefaultCallerId;
+        info.DialTimeout = respObj?.XVD?.DialTimeout || delete info.DialTimeout;
         
         info.Inbound = new CampaignIBPropertiesInfo();
-        info.Inbound.AllowDialBack = respObj?.XVD?.AllowDialBack || '--';
-        info.Inbound.CDNs = respObj?.XVD?.CDNs || '--';
+        info.Inbound.AllowDialBack = respObj?.XVD?.IB?.AllowDialBack?.toString() || delete info.Inbound.AllowDialBack;
+        info.Inbound.CDNs = respObj?.XVD?.IB?.CDNs || delete info.Inbound.CDNs;
 
         return info;
     }
@@ -513,7 +513,7 @@ export class CampaignInfo{
     DialMode!: string;
     TaskLimit!: string;
     ContactList!: string;
-    Status!: string;
+    Status!: any;
 }
 
 export class CampaignStatusInfo{
@@ -526,7 +526,7 @@ export class CampaignStatusInfo{
     TaskLimit!: string;
     ContactList!: string;
     TotalContacts!: string;
-    Status!: string;
+    Status!: any;
     Agents!: any;
     Queues!: any;
 }
@@ -540,7 +540,7 @@ export class CampaignPropertiesInfo{
     DialMode!: string;
     TaskLimit!: string;
     ContactList!: string;
-    Status!: string;
+    Status!: any;
     Global!: CampaignGlobalPropertiesInfo;
     Telephony!: CampaignTelephonePropertiesInfo;
     Chat!: CampaignChatPropertiesInfo;

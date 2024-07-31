@@ -20,10 +20,10 @@ export class CommandService{
         // cmdInfo.actions = [CommandAction.List];
         // this.commandList.push(cmdInfo);
         
-        // cmdInfo = new CommandInfo();
-        // cmdInfo.name = CommandEntity.Campaign;
-        // cmdInfo.actions = [CommandAction.List, CommandAction.Properties, CommandAction.Status, CommandAction.Load, CommandAction.Start, CommandAction.Stop, CommandAction.Unload];
-        // this.commandList.push(cmdInfo);
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.Campaign;
+        cmdInfo.actions = [CommandAction.List, CommandAction.Properties, CommandAction.Status, CommandAction.Load, CommandAction.Start, CommandAction.Stop, CommandAction.Unload];
+        this.commandList.push(cmdInfo);
         
         // cmdInfo = new CommandInfo();
         // cmdInfo.name = CommandEntity.CampaignAbandonCallList;
@@ -281,6 +281,22 @@ export class CommandService{
                 replyMessage = await this.common.campaignController.fetchCampaignResponse(command?.tenantCode, command?.entityCode);
             }else if(command.tenantCode){                
                 replyMessage = await this.common.campaignController.fetchCampaignsResponse(command?.tenantCode);
+            }else{                
+                replyMessage = `Invalid tenant code!`;
+            }
+        }
+
+        if(command.action === CommandAction.Status){
+            if(command.entityCode && command.tenantCode){
+                replyMessage = await this.common.campaignController.fetchCampaignStatusResponse(command?.tenantCode, command?.entityCode);
+            }else{                
+                replyMessage = `Invalid tenant code!`;
+            }
+        }
+
+        if(command.action === CommandAction.Properties){
+            if(command.entityCode && command.tenantCode){
+                replyMessage = await this.common.campaignController.fetchCampaignPropertiesResponse(command?.tenantCode, command?.entityCode);
             }else{                
                 replyMessage = `Invalid tenant code!`;
             }

@@ -436,7 +436,7 @@ export class CampaignController{
                             campaignInfo.ContactList = result?.Response?.Entities[0]?.Global?.DefContactListCode || delete campaignInfo.ContactList;
                             campaignInfo.TaskLimit = result?.Response?.Entities[0]?.Global?.AgentTaskLimit || delete campaignInfo.TaskLimit;
     
-                            result = await this.common.ccSvc.startCampaign(sessionId, entity.Id);
+                            result = await this.common.ccSvc.startCampaign(sessionId, entity.Id, 'Manual');
                             if(result?.ResultType === HttpResultType.Success){
                                 result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
                                 campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;

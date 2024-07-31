@@ -547,7 +547,7 @@ class CCService {
             });
         });
     }
-    startCampaign(sessionId, campaignId) {
+    startCampaign(sessionId, campaignId, dialMode) {
         return new Promise((resolve) => {
             var result = new HttpResult();
             var ccServer = this.common.property.application.ccServer;
@@ -565,6 +565,7 @@ class CCService {
                     ReqId: request_processor_1.Request.Id,
                     ReqType: request_processor_1.Request.Type.Control,
                     ReqCode: request_processor_1.Request.Code.StartCampaign,
+                    DialMode: dialMode?.toString(),
                     CampaignId: campaignId?.toString()
                 }
             };

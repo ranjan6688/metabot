@@ -647,7 +647,7 @@ export class CCService{
 
     }
     
-    startCampaign(sessionId: any, campaignId: any): Promise<HttpResult>{
+    startCampaign(sessionId: any, campaignId: any, dialMode: any): Promise<HttpResult>{
         
         return new Promise((resolve: any) => {
 
@@ -669,6 +669,7 @@ export class CCService{
                     ReqId: Request.Id,
                     ReqType: Request.Type.Control,
                     ReqCode: Request.Code.StartCampaign,
+                    DialMode: dialMode?.toString(),
                     CampaignId: campaignId?.toString()
                 }
             };

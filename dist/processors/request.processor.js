@@ -25,7 +25,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Request = exports.RequestProcessor = void 0;
 const httpstatus = __importStar(require("http-status-codes"));
-const cc_service_1 = require("../services/cc.service");
 const response_processor_1 = require("./response.processor");
 class RequestProcessor {
     common;
@@ -131,7 +130,7 @@ class RequestProcessor {
         this.common.graphApiController.onWebhookGetMessageRecieved(request, response);
     };
     processTestMessage = async (request, response) => {
-        this.common.graphApiController.onTestMessageRecieved(request, response);
+        this.common.cmdSvc.onTestMessageRecieved(request, response);
     };
     /**
      * LOG REQUEST
@@ -161,54 +160,6 @@ class RequestProcessor {
         var encryptedText = this.common.chipherSvc.AESdecrypt(queryText);
         return response.status(200).send(encryptedText);
     };
-    async getDefaultAdmin(clientCode, common, serverResponse) {
-        var result = await common.ccSvc.register();
-        result = await this.onCCRegistered(clientCode, result, common, serverResponse);
-        console.log(`CC REGISTERED`, result);
-        return result;
-    }
-    async onCCRegistered(clientCode, response, common, serverResponse) {
-        if (response?.ResultType === cc_service_1.HttpResultType.Success) {
-            var sessionId = response?.Response?.SessionId;
-            var client = new cc_service_1.CCClient();
-            client.ApplicationCode = `RADIUSClient`;
-            client.ClientCode = `SYS`;
-            client.Username = common.property.application.ccServer.suLoginId;
-            client.Password = common.chipherSvc.AESdecrypt(common.property.application.ccServer.suPassword);
-            response = await common.ccSvc.login(sessionId, client);
-            console.log(`CC LOGGED IN`, response);
-            response = await this.onCCLoggedIn(sessionId, clientCode, response, common, serverResponse);
-            return response;
-        }
-        else {
-            common.logger.error(response?.Exception);
-            this.common.responseProcessor.setError(response?.Exception, response_processor_1.Response.Code.RegisterFailed, httpstatus.OK, serverResponse);
-            return undefined;
-        }
-    }
-    async onCCLoggedIn(sessionId, clientCode, response, common, serverResponse) {
-        if (response?.ResultType === cc_service_1.HttpResultType.Success && (response?.Response?.EvCode === "Loggedin" || response?.Response?.EvCode === "UserLoggedIn")) {
-            response = await common.ccSvc.fetchCTClient(sessionId, clientCode);
-            console.log(`CC CTCLIENT FETCHED`, response);
-            response = await this.onCTClientFetched(response, common, serverResponse);
-            return response;
-        }
-        else {
-            common.logger.error(response?.Exception);
-            this.common.responseProcessor.setError(response?.Exception, response_processor_1.Response.Code.LogInFailed, httpstatus.OK, serverResponse);
-            return undefined;
-        }
-    }
-    onCTClientFetched(response, common, serverResponse) {
-        if (response?.ResultType === cc_service_1.HttpResultType.Success && (response?.Response?.EvCode === "EntityFetched" || response?.Response?.EvCode === "EntitiesFetched")) {
-            return response?.Response?.Entities[0];
-        }
-        else {
-            common.logger.error(response?.Exception);
-            this.common.responseProcessor.setError(response?.Exception, response_processor_1.Response.Code.EntityFetchFailed, httpstatus.OK, serverResponse);
-            return undefined;
-        }
-    }
     /**
      * FORMATS AND APPEND LOGS
      * @param request
@@ -319,6 +270,7 @@ exports.Request = {
         Register: "Register",
         Unregister: "Unregister",
         Login: "Login",
+        Logout: "Logout",
         RegisterService: "RegisterService",
         PullRtEvents: "PullRtEvents",
         EntityFetch: "EntityFetch",
@@ -326,7 +278,8 @@ exports.Request = {
         CTClientStart: "CTClientStart",
         CTClientStop: "CTClientStop",
         AbandonCallFetch: "AbandonCallFetch",
-        CallAbandonCancel: "CallAbandonCancel"
+        CallAbandonCancel: "CallAbandonCancel",
+        CampaignStatFetch: "CampaignStatFetch",
     },
     User: {
         Type: {

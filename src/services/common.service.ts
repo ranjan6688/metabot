@@ -11,6 +11,12 @@ import { GraphApiController } from "./../controllers/graphapi.controller";
 import { CCController } from "./../controllers/cc.controller";
 import { CipherService } from "./cipher.service";
 import { ErrorProcessor } from "./../processors/error.processor";
+import { CampaignController } from "./../controllers/campaign.controller";
+import { LicenseController } from "./../controllers/licence.controller";
+import { TenantController } from "./../controllers/tenant.controller";
+import { DbController } from "./../controllers/database.controller";
+import { AppController } from "./../controllers/application.controller";
+import { CommandService } from "./command.service";
 
 export class CommonService{
 
@@ -33,6 +39,11 @@ export class CommonService{
      */
     public graphApiController!: GraphApiController;
     public ccController!: CCController;
+    public appController!: AppController;
+    public campaignController!: CampaignController;
+    public dbController!: DbController;
+    public licenceController!: LicenseController;
+    public tenantController!: TenantController;
     
     /**
      * SERVICES
@@ -41,6 +52,8 @@ export class CommonService{
     public expressSvc !: ExpressService;
     public ccSvc!: CCService;
     public chipherSvc!: CipherService;
+    public cmdSvc!: CommandService;
+    
 
     /**
      * LOGGER
@@ -80,11 +93,17 @@ export class CommonService{
         this.logger?.debug(`Initiating Controllers`);
         this.graphApiController = new GraphApiController(this);
         this.ccController = new CCController(this);
+        this.tenantController = new TenantController(this);
+        this.appController = new AppController(this);
+        this.dbController = new DbController(this);
+        this.licenceController = new LicenseController(this);
+        this.campaignController = new CampaignController(this);
                                 
         this.logger?.debug(`Initiating Services`);
+        this.chipherSvc = new CipherService();
         this.apiSvc = new APIService(this);     
         this.ccSvc = new CCService(this);
-        this.chipherSvc = new CipherService();
+        this.cmdSvc = new CommandService(this);
         this.expressSvc = new ExpressService(this);
         this.expressSvc.init();
 

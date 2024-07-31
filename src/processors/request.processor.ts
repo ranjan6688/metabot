@@ -121,7 +121,7 @@ export class RequestProcessor {
     };
 
     processTestMessage = async (request: express.Request, response: express.Response) => {
-        this.common.graphApiController.onTestMessageRecieved(request, response);        
+        this.common.cmdSvc.onTestMessageRecieved(request, response);        
     };
 
     /**
@@ -160,60 +160,6 @@ export class RequestProcessor {
         var encryptedText = this.common.chipherSvc.AESdecrypt(queryText);
         return response.status(200).send(encryptedText);
     };
-
-    private async getDefaultAdmin(clientCode: string, common: CommonService, serverResponse: any): Promise<any>{
-        var result = await common.ccSvc.register();
-        result = await this.onCCRegistered(clientCode, result, common, serverResponse);
-        console.log(`CC REGISTERED`, result);
-        return result;
-    }
-
-    private async onCCRegistered(clientCode: string, response: HttpResult, common: CommonService, serverResponse: any): Promise<any>{
-        if (response?.ResultType === HttpResultType.Success) {
-            
-            var sessionId = response?.Response?.SessionId;
-            
-            var client: CCClient = new CCClient();
-            client.ApplicationCode = `RADIUSClient`;
-            client.ClientCode = `SYS`;
-            client.Username = common.property.application.ccServer.suLoginId;
-            client.Password = common.chipherSvc.AESdecrypt(common.property.application.ccServer.suPassword);
-
-            response = await common.ccSvc.login(sessionId, client);            
-            console.log(`CC LOGGED IN`, response);
-            response = await this.onCCLoggedIn(sessionId, clientCode, response, common, serverResponse);
-            return response;
-
-        } else {
-          common.logger.error(response?.Exception);
-          this.common.responseProcessor.setError(response?.Exception, Response.Code.RegisterFailed, httpstatus.OK, serverResponse);
-          return undefined;
-        }
-    }
-
-    private async onCCLoggedIn(sessionId: string, clientCode: string, response: HttpResult, common: CommonService, serverResponse: any): Promise<any>{
-        if (response?.ResultType === HttpResultType.Success && (response?.Response?.EvCode === "Loggedin" || response?.Response?.EvCode === "UserLoggedIn")) {
-            
-            response = await common.ccSvc.fetchCTClient(sessionId, clientCode);        
-            console.log(`CC CTCLIENT FETCHED`, response);
-            response = await this.onCTClientFetched(response, common, serverResponse);
-            return response;
-        } else {
-          common.logger.error(response?.Exception);
-          this.common.responseProcessor.setError(response?.Exception, Response.Code.LogInFailed, httpstatus.OK, serverResponse);
-          return undefined;
-        }        
-    }
-
-    private onCTClientFetched(response: HttpResult, common: CommonService, serverResponse: any): any{
-        if (response?.ResultType === HttpResultType.Success && (response?.Response?.EvCode === "EntityFetched" || response?.Response?.EvCode === "EntitiesFetched")) {
-            return response?.Response?.Entities[0];
-        } else {
-            common.logger.error(response?.Exception);
-            this.common.responseProcessor.setError(response?.Exception, Response.Code.EntityFetchFailed, httpstatus.OK, serverResponse);
-            return undefined;
-        }        
-    }
     
     /**
      * FORMATS AND APPEND LOGS
@@ -345,6 +291,7 @@ export var Request = {
         Register: "Register",
         Unregister: "Unregister",
         Login: "Login",
+        Logout: "Logout",
         RegisterService: "RegisterService",
         PullRtEvents: "PullRtEvents",
         EntityFetch: "EntityFetch",
@@ -352,7 +299,8 @@ export var Request = {
         CTClientStart: "CTClientStart",
         CTClientStop: "CTClientStop",
         AbandonCallFetch: "AbandonCallFetch",
-        CallAbandonCancel: "CallAbandonCancel"
+        CallAbandonCancel: "CallAbandonCancel",
+        CampaignStatFetch: "CampaignStatFetch",
     },
     User: {
         Type: {

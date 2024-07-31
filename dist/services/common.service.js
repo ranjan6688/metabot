@@ -17,6 +17,12 @@ const graphapi_controller_1 = require("./../controllers/graphapi.controller");
 const cc_controller_1 = require("./../controllers/cc.controller");
 const cipher_service_1 = require("./cipher.service");
 const error_processor_1 = require("./../processors/error.processor");
+const campaign_controller_1 = require("./../controllers/campaign.controller");
+const licence_controller_1 = require("./../controllers/licence.controller");
+const tenant_controller_1 = require("./../controllers/tenant.controller");
+const database_controller_1 = require("./../controllers/database.controller");
+const application_controller_1 = require("./../controllers/application.controller");
+const command_service_1 = require("./command.service");
 class CommonService {
     /**
      * COMMON VARIABLES
@@ -35,6 +41,11 @@ class CommonService {
      */
     graphApiController;
     ccController;
+    appController;
+    campaignController;
+    dbController;
+    licenceController;
+    tenantController;
     /**
      * SERVICES
      */
@@ -42,6 +53,7 @@ class CommonService {
     expressSvc;
     ccSvc;
     chipherSvc;
+    cmdSvc;
     /**
      * LOGGER
      */
@@ -72,10 +84,16 @@ class CommonService {
         this.logger?.debug(`Initiating Controllers`);
         this.graphApiController = new graphapi_controller_1.GraphApiController(this);
         this.ccController = new cc_controller_1.CCController(this);
+        this.tenantController = new tenant_controller_1.TenantController(this);
+        this.appController = new application_controller_1.AppController(this);
+        this.dbController = new database_controller_1.DbController(this);
+        this.licenceController = new licence_controller_1.LicenseController(this);
+        this.campaignController = new campaign_controller_1.CampaignController(this);
         this.logger?.debug(`Initiating Services`);
+        this.chipherSvc = new cipher_service_1.CipherService();
         this.apiSvc = new api_service_1.APIService(this);
         this.ccSvc = new cc_service_1.CCService(this);
-        this.chipherSvc = new cipher_service_1.CipherService();
+        this.cmdSvc = new command_service_1.CommandService(this);
         this.expressSvc = new express_service_1.ExpressService(this);
         this.expressSvc.init();
     }

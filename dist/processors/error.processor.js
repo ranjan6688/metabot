@@ -12,6 +12,8 @@ class ErrorProcessor {
             return this.processEvCause(errorResponse?.EvCause);
         if (errorResponse?.Expected || errorResponse?.Found)
             return `Found ${errorResponse?.Found} but expected ${errorResponse?.Expected}`;
+        if (errorResponse?.EvCode)
+            return errorResponse?.EvCode;
         return '';
     }
     processErrorCause(errorCause) {

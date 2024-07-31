@@ -15,6 +15,9 @@ export class ErrorProcessor{
         if(errorResponse?.Expected || errorResponse?.Found)
             return `Found ${errorResponse?.Found} but expected ${errorResponse?.Expected}`;
 
+        if(errorResponse?.EvCode)
+            return errorResponse?.EvCode;
+
         return '';
     }
 

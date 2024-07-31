@@ -441,10 +441,10 @@ export class CampaignController{
                                 result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
                                 campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
                                 campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete campaignInfo.Status;
-                            }else{                                
+                            }else{                               
+                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception); 
                                 result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
                                 campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
-                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
                             }
 
                             campaignInfos.push(campaignInfo);
@@ -514,9 +514,9 @@ export class CampaignController{
                                 campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
                                 campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete campaignInfo.Status;
                             }else{                                
+                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
                                 result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
                                 campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
-                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
                             }
 
                             campaignInfos.push(campaignInfo);
@@ -586,9 +586,9 @@ export class CampaignController{
                                 campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
                                 campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete campaignInfo.Status;
                             }else{                                
+                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
                                 result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
                                 campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
-                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
                             }
 
                             campaignInfos.push(campaignInfo);

@@ -351,9 +351,9 @@ class CampaignController {
                                 campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete campaignInfo.Status;
                             }
                             else {
+                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
                                 result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
                                 campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
-                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
                             }
                             campaignInfos.push(campaignInfo);
                             campaignInfos = [...new Map(campaignInfos.map(item => [item['Id'], item])).values()];
@@ -411,9 +411,9 @@ class CampaignController {
                                 campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete campaignInfo.Status;
                             }
                             else {
+                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
                                 result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
                                 campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
-                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
                             }
                             campaignInfos.push(campaignInfo);
                             campaignInfos = [...new Map(campaignInfos.map(item => [item['Id'], item])).values()];
@@ -471,9 +471,9 @@ class CampaignController {
                                 campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete campaignInfo.Status;
                             }
                             else {
+                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
                                 result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
                                 campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
-                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
                             }
                             campaignInfos.push(campaignInfo);
                             campaignInfos = [...new Map(campaignInfos.map(item => [item['Id'], item])).values()];

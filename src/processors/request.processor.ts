@@ -368,6 +368,10 @@ export var Request = {
         Queue: 'Queue',
         Project: 'Project',
         AbandonCall: 'AbandonCall',
-        AbandonCallHistory: 'AbandonCallHistory'
+        AbandonCallHistory: 'AbandonCallHistory',
+        CTClient: 'CTClient',
+        Application: 'Application',
+        CTClientDB: 'CTClientDB',
+        License: 'License'
     }
 }

@@ -1,7 +1,7 @@
 import axios from "axios";
 import express from "express";
 import { CommonService } from "./../services/common.service";
-import { TenantInfo } from "./cc.controller";
+import { ApplicationInfo, DatabaseInfo, TenantInfo, TenantLicenseInfo } from "./cc.controller";
 
 export class GraphApiController{
 
@@ -17,38 +17,43 @@ export class GraphApiController{
         cmdInfo.actions = [CommandAction.Fetch];
         this.commandList.push(cmdInfo);
         
-        cmdInfo = new CommandInfo();
-        cmdInfo.name = CommandEntity.Callback;
-        cmdInfo.actions = [CommandAction.Fetch];
-        this.commandList.push(cmdInfo);
+        // cmdInfo = new CommandInfo();
+        // cmdInfo.name = CommandEntity.Callback;
+        // cmdInfo.actions = [CommandAction.Fetch];
+        // this.commandList.push(cmdInfo);
         
-        cmdInfo = new CommandInfo();
-        cmdInfo.name = CommandEntity.Campaign;
-        cmdInfo.actions = [CommandAction.Fetch, CommandAction.Properties, CommandAction.Status, CommandAction.Load, CommandAction.Start, CommandAction.Stop, CommandAction.Unload];
-        this.commandList.push(cmdInfo);
+        // cmdInfo = new CommandInfo();
+        // cmdInfo.name = CommandEntity.Campaign;
+        // cmdInfo.actions = [CommandAction.Fetch, CommandAction.Properties, CommandAction.Status, CommandAction.Load, CommandAction.Start, CommandAction.Stop, CommandAction.Unload];
+        // this.commandList.push(cmdInfo);
         
-        cmdInfo = new CommandInfo();
-        cmdInfo.name = CommandEntity.CampaignAbandonCallList;
-        cmdInfo.actions = [CommandAction.Fetch];
-        this.commandList.push(cmdInfo);
+        // cmdInfo = new CommandInfo();
+        // cmdInfo.name = CommandEntity.CampaignAbandonCallList;
+        // cmdInfo.actions = [CommandAction.Fetch];
+        // this.commandList.push(cmdInfo);
         
-        cmdInfo = new CommandInfo();
-        cmdInfo.name = CommandEntity.CampaignDisposition;
-        cmdInfo.actions = [CommandAction.Fetch];
-        this.commandList.push(cmdInfo);
+        // cmdInfo = new CommandInfo();
+        // cmdInfo.name = CommandEntity.CampaignDisposition;
+        // cmdInfo.actions = [CommandAction.Fetch];
+        // this.commandList.push(cmdInfo);
         
-        cmdInfo = new CommandInfo();
-        cmdInfo.name = CommandEntity.ContactList;
-        cmdInfo.actions = [CommandAction.Fetch];
-        this.commandList.push(cmdInfo);
+        // cmdInfo = new CommandInfo();
+        // cmdInfo.name = CommandEntity.ContactList;
+        // cmdInfo.actions = [CommandAction.Fetch];
+        // this.commandList.push(cmdInfo);
         
         cmdInfo = new CommandInfo();
         cmdInfo.name = CommandEntity.Database;
         cmdInfo.actions = [CommandAction.Fetch, CommandAction.Status];
         this.commandList.push(cmdInfo);
         
+        // cmdInfo = new CommandInfo();
+        // cmdInfo.name = CommandEntity.Skill;
+        // cmdInfo.actions = [CommandAction.Fetch];
+        // this.commandList.push(cmdInfo);
+        
         cmdInfo = new CommandInfo();
-        cmdInfo.name = CommandEntity.Skill;
+        cmdInfo.name = CommandEntity.Licence;
         cmdInfo.actions = [CommandAction.Fetch];
         this.commandList.push(cmdInfo);
         
@@ -84,6 +89,7 @@ export class GraphApiController{
                             replyMessage = await this.fetchCommandList();
                             break;
                         case CommandEntity.Application:
+                            replyMessage = await this.onApplicationCommandRecieved(command);
                             break;
                         case CommandEntity.Callback:
                             break;
@@ -96,11 +102,15 @@ export class GraphApiController{
                         case CommandEntity.ContactList:
                             break;
                         case CommandEntity.Database:
+                            replyMessage = await this.onDatabaseCommandRecieved(command);
                             break;
                         case CommandEntity.Skill:
                             break;
                         case CommandEntity.Tenant:
                             replyMessage = await this.onTenantCommandRecieved(command);
+                            break;
+                        case CommandEntity.Licence:
+                            replyMessage = await this.onLicenseCommandRecieved(command);
                             break;
                         default:
                             replyMessage = await this.fetchCommandListOnInvalidCommand();
@@ -127,13 +137,47 @@ export class GraphApiController{
         response.sendStatus(200);
     }
 
+    async onApplicationCommandRecieved(command: Command){
+        var replyMessage = '';
+        if(command.action === CommandAction.Fetch){
+            if(!command.entityCode){
+                replyMessage = await this.fetchApplications();
+            }else{                
+                replyMessage = await this.fetchApplication(command?.entityCode);
+            }
+        }
+
+        if(!replyMessage){
+            replyMessage = await this.fetchCommandListOnInvalidCommand();
+        }
+
+        return replyMessage;
+    }
+
+    async onDatabaseCommandRecieved(command: Command){
+        var replyMessage = '';
+        if(command.action === CommandAction.Fetch){
+            if(!command.entityCode){
+                replyMessage = await this.fetchDatabases();
+            }else{                
+                replyMessage = await this.fetchDatabase(command?.entityCode);
+            }
+        }
+
+        if(!replyMessage){
+            replyMessage = await this.fetchCommandListOnInvalidCommand();
+        }
+
+        return replyMessage;
+    }
+
     async onTenantCommandRecieved(command: Command){
         var replyMessage = '';
         if(command.action === CommandAction.Fetch){
             if(!command.entityCode){
-                replyMessage = await this.fetchTenantList();
+                replyMessage = await this.fetchTenants();
             }else{                
-                replyMessage = await this.fetchTenantInfo(command?.entityCode);
+                replyMessage = await this.fetchTenant(command?.entityCode);
             }
         }
 
@@ -168,6 +212,23 @@ export class GraphApiController{
         return replyMessage;
     }
 
+    async onLicenseCommandRecieved(command: Command){
+        var replyMessage = '';
+        if(command.action === CommandAction.Fetch){
+            if(!command.entityCode){
+                replyMessage = `Invalid tenant code!`;
+            }else{                
+                replyMessage = await this.fetchLicense(command?.entityCode);
+            }
+        }
+
+        if(!replyMessage){
+            replyMessage = await this.fetchCommandListOnInvalidCommand();
+        }
+
+        return replyMessage;
+    }
+
     async onTestMessageRecieved(request: express.Request, response: express.Response){
 
         var command: Command = await this.getCommandFromMessage(request?.body?.text?.trim(), response);
@@ -180,6 +241,8 @@ export class GraphApiController{
                     response.status(200).send(replyMessage);
                     break;
                 case CommandEntity.Application:
+                    var replyMessage = await this.onApplicationCommandRecieved(command);
+                    response.status(200).send(replyMessage);
                     break;
                 case CommandEntity.Callback:
                     break;
@@ -192,11 +255,17 @@ export class GraphApiController{
                 case CommandEntity.ContactList:
                     break;
                 case CommandEntity.Database:
+                    var replyMessage = await this.onDatabaseCommandRecieved(command);
+                    response.status(200).send(replyMessage);
                     break;
                 case CommandEntity.Skill:
                     break;
                 case CommandEntity.Tenant:
                     var replyMessage = await this.onTenantCommandRecieved(command);
+                    response.status(200).send(replyMessage);
+                    break;
+                case CommandEntity.Licence:
+                    replyMessage = await this.onLicenseCommandRecieved(command);
                     response.status(200).send(replyMessage);
                     break;
                 default:
@@ -209,7 +278,7 @@ export class GraphApiController{
     }
 
     async getCommandFromMessage(message: string, response: express.Response){
-        var messages = message?.split('|');
+        var messages = message?.split('-');
         if(!messages || messages?.length === 0){
             var replyMessage = await this.fetchCommandListOnInvalidCommand();
             response.status(500).send(replyMessage);
@@ -219,8 +288,8 @@ export class GraphApiController{
         var command = new Command();
         command.entity = messages[0]?.trim();
         command.action = messages[1]?.trim();
-        command.entityCode = messages[2]?.trim();
-        command.tenantCode = messages[3]?.trim();
+        command.entityCode = messages[2]?.trim()?.toUpperCase();
+        command.tenantCode = messages[3]?.trim()?.toUpperCase();
         return command;
     }
 
@@ -237,19 +306,28 @@ export class GraphApiController{
                 command.name === CommandEntity.Tenant){
                     var cmdStr = `*${command.name}*\ni.e. ${command.name}`;
                     if(command?.actions?.length > 0){
-                        cmdStr += ` | [${command?.actions?.join(',')}]`
+                        cmdStr += `-[${command?.actions?.join(',')}]`
                     }
-                    cmdStr += ` | ${command.name}-code\n`;
+                    cmdStr += `-${command.name}Code\n`;
                     cmdArray.push(cmdStr);
                 }
+
+            else if (command.name === CommandEntity.Licence) {
+                var cmdStr = `*${command.name}*\ni.e. ${command.name}`;
+                if (command?.actions?.length > 0) {
+                    cmdStr += `-[${command?.actions?.join(',')}]`
+                }
+                cmdStr += `-tenantCode\n`;
+                cmdArray.push(cmdStr);
+            }
             
             else{
                 var cmdStr = `*${command.name}*\ni.e. ${command.name}`;
                 if(command?.actions?.length > 0){
-                    cmdStr += ` | [${command?.actions?.join(',')}]`
+                    cmdStr += `-[${command?.actions?.join(',')}]`
                 }
-                cmdStr += ` | ${command.name}-code`;
-                cmdStr += ` | tenant-code\n`;
+                cmdStr += `-${command.name}Code`;
+                cmdStr += `-tenantCode\n`;
                 cmdArray.push(cmdStr);
             }
         });
@@ -271,19 +349,19 @@ export class GraphApiController{
                 command.name === CommandEntity.Tenant){
                     var cmdStr = `*${command.name}*\ni.e. ${command.name}`;
                     if(command?.actions?.length > 0){
-                        cmdStr += ` | [${command?.actions?.join(',')}]`
+                        cmdStr += `-[${command?.actions?.join(',')}]`
                     }
-                    cmdStr += ` | ${command.name}-code\n`;
+                    cmdStr += `-${command.name}Code\n`;
                     cmdArray.push(cmdStr);
                 }
             
             else{
                 var cmdStr = `*${command.name}*\ni.e. ${command.name}`;
                 if(command?.actions?.length > 0){
-                    cmdStr += ` | [${command?.actions?.join(',')}]`
+                    cmdStr += `-[${command?.actions?.join(',')}]`
                 }
-                cmdStr += ` | ${command.name}-code`;
-                cmdStr += ` | tenant-code\n`;
+                cmdStr += `-${command.name}Code`;
+                cmdStr += `-tenantCode\n`;
                 cmdArray.push(cmdStr);
             }
         });
@@ -291,7 +369,75 @@ export class GraphApiController{
         return cmdArray.join('\n');
     }
 
-    async fetchTenantList(): Promise<string>{
+    async fetchApplications(): Promise<string>{
+
+        var responseStringArray: any[] = [];
+        var keyValueStringArray: any[] = [];
+
+        var appInfos: ApplicationInfo[] = await this.common.ccController.fetchApplications();
+        appInfos?.forEach((info: ApplicationInfo) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if(!replyMessage)
+            replyMessage = `No application found`;
+        return replyMessage;
+    }
+
+    async fetchApplication(applicationCode: any): Promise<string>{
+
+        var responseStringArray: any[] = [];
+        var keyValueStringArray: any[] = [];
+
+        var appInfos: ApplicationInfo[] = await this.common.ccController.fetchApplication(applicationCode);
+        appInfos?.forEach((info: ApplicationInfo) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if(!replyMessage)
+            replyMessage = `No application found`;
+        return replyMessage;
+    }
+
+    async fetchDatabases(): Promise<string>{
+
+        var responseStringArray: any[] = [];
+        var keyValueStringArray: any[] = [];
+
+        var dbInfos: DatabaseInfo[] = await this.common.ccController.fetchDatabases();
+        dbInfos?.forEach((info: DatabaseInfo) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if(!replyMessage)
+            replyMessage = `No database found`;
+        return replyMessage;
+    }
+
+    async fetchDatabase(databaseCode: any): Promise<string>{
+
+        var responseStringArray: any[] = [];
+        var keyValueStringArray: any[] = [];
+
+        var dbInfos: DatabaseInfo[] = await this.common.ccController.fetchDatabase(databaseCode);
+        dbInfos?.forEach((info: DatabaseInfo) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if(!replyMessage)
+            replyMessage = `No database found`;
+        return replyMessage;
+    }
+
+    async fetchTenants(): Promise<string>{
 
         var responseStringArray: any[] = [];
         var keyValueStringArray: any[] = [];
@@ -304,11 +450,11 @@ export class GraphApiController{
         
         var replyMessage = responseStringArray.join(`\n===============================\n`);
         if(!replyMessage)
-            replyMessage = `No tenants found`;
+            replyMessage = `No tenant found`;
         return replyMessage;
     }
 
-    async fetchTenantInfo(tenantCode: any): Promise<string>{
+    async fetchTenant(tenantCode: any): Promise<string>{
 
         var responseStringArray: any[] = [];
         var keyValueStringArray: any[] = [];
@@ -366,6 +512,23 @@ export class GraphApiController{
 
         var tenantInfos: TenantInfo[] = await this.common.ccController.stopTenant(tenantCode);
         tenantInfos?.forEach((info: TenantInfo) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if(!replyMessage)
+            replyMessage = `No tenant found`;
+        return replyMessage;
+    }
+
+    async fetchLicense(tenantCode: any): Promise<string>{
+
+        var responseStringArray: any[] = [];
+        var keyValueStringArray: any[] = [];
+
+        var licenseInfos: TenantLicenseInfo[] = await this.common.ccController.fetchLicense(tenantCode);
+        licenseInfos?.forEach((info: TenantLicenseInfo) => {
             keyValueStringArray = this.getKeyValueStringArray(info);
             responseStringArray.push(keyValueStringArray.join('\n'));
         });
@@ -468,6 +631,7 @@ export class CommandInfo{
 export enum CommandEntity{
     Help = 'help',
     Tenant = 'tenant',
+    Licence = 'licence',
     Application = 'application',
     Database = 'database',
     Campaign = 'campaign',

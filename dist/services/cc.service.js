@@ -183,7 +183,67 @@ class CCService {
                     ReqId: request_processor_1.Request.Id,
                     ReqType: request_processor_1.Request.Type.Config,
                     ReqCode: request_processor_1.Request.Code.EntityFetch,
-                    EntityName: "CTClient",
+                    EntityName: request_processor_1.Request.Entity.CTClient,
+                    Filters: filters,
+                    OrderBy: [
+                        {
+                            "Name": true
+                        }
+                    ],
+                    IncludeCount: "true",
+                    Limit: limit,
+                    Offset: offset
+                }
+            };
+            request_1.default.post(options, (error, response, body) => {
+                console.log(error, response, body);
+                if (error) {
+                    this.common.logger.error(`CC >> Failed to fetch ctclient`, error);
+                    result.ResultType = HttpResultType.Failed;
+                    result.Exception = error;
+                    resolve(result);
+                }
+                if (response) {
+                    this.common.logger.log(`CC >> CTClient Fetched`, response);
+                    if (typeof response?.body === 'string')
+                        response = JSON.parse(response?.body);
+                    else
+                        response = response?.body;
+                    if (response.RespType === "Failed" || response.EvType === "Failed") {
+                        result.ResultType = HttpResultType.Failed;
+                        result.Exception = response;
+                    }
+                    else {
+                        result.ResultType = HttpResultType.Success;
+                        result.Response = response;
+                    }
+                    resolve(result);
+                }
+            });
+        });
+    }
+    fetchCTClientByDB(sessionId, databaseId = undefined, limit = 25, offset = 0) {
+        return new Promise((resolve) => {
+            var result = new HttpResult();
+            var ccServer = this.common.property.application.ccServer;
+            var protocol = ccServer.isSsl === true ? 'https:' : 'http:';
+            var domain = ccServer.ipAddress + (ccServer.port ? ':' + ccServer.port : '');
+            var filters = {};
+            if (databaseId)
+                filters.byctclientdb = [databaseId];
+            request_processor_1.Request.Id++;
+            let options = {
+                url: `${protocol}//${domain}/radius/cc/aws/fetch`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'SessionId': sessionId
+                },
+                strictSSL: this.common.property.application.ccServer.strictSsl,
+                json: {
+                    ReqId: request_processor_1.Request.Id,
+                    ReqType: request_processor_1.Request.Type.Config,
+                    ReqCode: request_processor_1.Request.Code.EntityFetch,
+                    EntityName: request_processor_1.Request.Entity.CTClient,
                     Filters: filters,
                     OrderBy: [
                         {
@@ -353,6 +413,184 @@ class CCService {
                 }
                 if (response) {
                     this.common.logger.log(`CC >> CTClient stopped`, response);
+                    if (typeof response?.body === 'string')
+                        response = JSON.parse(response?.body);
+                    else
+                        response = response?.body;
+                    if (response.RespType === "Failed" || response.EvType === "Failed") {
+                        result.ResultType = HttpResultType.Failed;
+                        result.Exception = response;
+                    }
+                    else {
+                        result.ResultType = HttpResultType.Success;
+                        result.Response = response;
+                    }
+                    resolve(result);
+                }
+            });
+        });
+    }
+    fetchLicense(sessionId, tenantId) {
+        return new Promise((resolve) => {
+            var result = new HttpResult();
+            var ccServer = this.common.property.application.ccServer;
+            var protocol = ccServer.isSsl === true ? 'https:' : 'http:';
+            var domain = ccServer.ipAddress + (ccServer.port ? ':' + ccServer.port : '');
+            var filters = {};
+            if (tenantId)
+                filters.byctclient = [tenantId];
+            request_processor_1.Request.Id++;
+            let options = {
+                url: `${protocol}//${domain}/radius/cc/aws/fetch`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'SessionId': sessionId
+                },
+                strictSSL: this.common.property.application.ccServer.strictSsl,
+                json: {
+                    ReqId: request_processor_1.Request.Id,
+                    ReqType: request_processor_1.Request.Type.Config,
+                    ReqCode: request_processor_1.Request.Code.EntityFetch,
+                    EntityName: request_processor_1.Request.Entity.License,
+                    Filters: filters,
+                    OrderBy: [
+                        {
+                            Id: false
+                        }
+                    ],
+                    IncludeCount: false
+                }
+            };
+            request_1.default.post(options, (error, response, body) => {
+                console.log(error, response, body);
+                if (error) {
+                    this.common.logger.error(`CC >> Failed to fetch database`, error);
+                    result.ResultType = HttpResultType.Failed;
+                    result.Exception = error;
+                    resolve(result);
+                }
+                if (response) {
+                    this.common.logger.log(`CC >> Database fetched`, response);
+                    if (typeof response?.body === 'string')
+                        response = JSON.parse(response?.body);
+                    else
+                        response = response?.body;
+                    if (response.RespType === "Failed" || response.EvType === "Failed") {
+                        result.ResultType = HttpResultType.Failed;
+                        result.Exception = response;
+                    }
+                    else {
+                        result.ResultType = HttpResultType.Success;
+                        result.Response = response;
+                    }
+                    resolve(result);
+                }
+            });
+        });
+    }
+    fetchApplication(sessionId, appllicationCode = undefined, limit = 25, offset = 0) {
+        return new Promise((resolve) => {
+            var result = new HttpResult();
+            var ccServer = this.common.property.application.ccServer;
+            var protocol = ccServer.isSsl === true ? 'https:' : 'http:';
+            var domain = ccServer.ipAddress + (ccServer.port ? ':' + ccServer.port : '');
+            var filters = {};
+            if (appllicationCode)
+                filters.bycode = [appllicationCode];
+            request_processor_1.Request.Id++;
+            let options = {
+                url: `${protocol}//${domain}/radius/cc/aws/fetch`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'SessionId': sessionId
+                },
+                strictSSL: this.common.property.application.ccServer.strictSsl,
+                json: {
+                    ReqId: request_processor_1.Request.Id,
+                    ReqType: request_processor_1.Request.Type.Config,
+                    ReqCode: request_processor_1.Request.Code.EntityFetch,
+                    EntityName: request_processor_1.Request.Entity.Application,
+                    Filters: filters,
+                    OrderBy: [
+                        {
+                            Name: true
+                        }
+                    ],
+                    IncludeCount: true,
+                    Limit: limit,
+                    Offset: offset
+                }
+            };
+            request_1.default.post(options, (error, response, body) => {
+                console.log(error, response, body);
+                if (error) {
+                    this.common.logger.error(`CC >> Failed to fetch application`, error);
+                    result.ResultType = HttpResultType.Failed;
+                    result.Exception = error;
+                    resolve(result);
+                }
+                if (response) {
+                    this.common.logger.log(`CC >> Application fetched`, response);
+                    if (typeof response?.body === 'string')
+                        response = JSON.parse(response?.body);
+                    else
+                        response = response?.body;
+                    if (response.RespType === "Failed" || response.EvType === "Failed") {
+                        result.ResultType = HttpResultType.Failed;
+                        result.Exception = response;
+                    }
+                    else {
+                        result.ResultType = HttpResultType.Success;
+                        result.Response = response;
+                    }
+                    resolve(result);
+                }
+            });
+        });
+    }
+    fetchDatabase(sessionId, databaseCode = undefined, limit = 25, offset = 0) {
+        return new Promise((resolve) => {
+            var result = new HttpResult();
+            var ccServer = this.common.property.application.ccServer;
+            var protocol = ccServer.isSsl === true ? 'https:' : 'http:';
+            var domain = ccServer.ipAddress + (ccServer.port ? ':' + ccServer.port : '');
+            var filters = {};
+            if (databaseCode)
+                filters.bycode = [databaseCode];
+            request_processor_1.Request.Id++;
+            let options = {
+                url: `${protocol}//${domain}/radius/cc/aws/fetch`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'SessionId': sessionId
+                },
+                strictSSL: this.common.property.application.ccServer.strictSsl,
+                json: {
+                    ReqId: request_processor_1.Request.Id,
+                    ReqType: request_processor_1.Request.Type.Config,
+                    ReqCode: request_processor_1.Request.Code.EntityFetch,
+                    EntityName: request_processor_1.Request.Entity.CTClientDB,
+                    Filters: filters,
+                    OrderBy: [
+                        {
+                            Name: true
+                        }
+                    ],
+                    IncludeCount: true,
+                    Limit: limit,
+                    Offset: offset
+                }
+            };
+            request_1.default.post(options, (error, response, body) => {
+                console.log(error, response, body);
+                if (error) {
+                    this.common.logger.error(`CC >> Failed to fetch database`, error);
+                    result.ResultType = HttpResultType.Failed;
+                    result.Exception = error;
+                    resolve(result);
+                }
+                if (response) {
+                    this.common.logger.log(`CC >> Database fetched`, response);
                     if (typeof response?.body === 'string')
                         response = JSON.parse(response?.body);
                     else

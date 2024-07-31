@@ -193,10 +193,10 @@ export class GraphApiController{
         }
 
         var command = new Command();
-        command.entity = messages[0];
-        command.action = messages[1];
-        command.entityCode = messages[2];
-        command.tenantCode = messages[3];
+        command.entity = messages[0]?.trim();
+        command.action = messages[1]?.trim();
+        command.entityCode = messages[2]?.trim();
+        command.tenantCode = messages[3]?.trim();
         return command;
     }
 

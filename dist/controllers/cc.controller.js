@@ -166,7 +166,7 @@ class CCController {
                             tenantInfo.MemDB.Username = entity?.CTClientDB?.MemDB?.DB1UserName;
                             tenantInfo.MemDB.Password = entity?.CTClientDB?.MemDB?.DB1Password;
                         }
-                        result = await this.common.ccSvc.startCTClient(sessionId, tenantCode);
+                        result = await this.common.ccSvc.startCTClient(sessionId, tenantInfo.Id);
                         if (result?.ResultType === cc_service_1.HttpResultType.Failed) {
                             this.common.logger.error(result.Exception);
                             tenantInfo.Status = `Failed to start! ${result?.Exception?.Message}`;
@@ -228,7 +228,7 @@ class CCController {
                             tenantInfo.MemDB.Username = entity?.CTClientDB?.MemDB?.DB1UserName;
                             tenantInfo.MemDB.Password = entity?.CTClientDB?.MemDB?.DB1Password;
                         }
-                        result = await this.common.ccSvc.stopCTClient(sessionId, tenantCode);
+                        result = await this.common.ccSvc.stopCTClient(sessionId, tenantInfo.Id);
                         if (result?.ResultType === cc_service_1.HttpResultType.Failed) {
                             this.common.logger.error(result.Exception);
                             tenantInfo.Status = `Failed to stop! ${result?.Exception?.Message}`;

@@ -10,6 +10,7 @@ import { ExpressService } from "./express.service";
 import { GraphApiController } from "./../controllers/graphapi.controller";
 import { CCController } from "./../controllers/cc.controller";
 import { CipherService } from "./cipher.service";
+import { ErrorProcessor } from "./../processors/error.processor";
 
 export class CommonService{
 
@@ -25,6 +26,7 @@ export class CommonService{
      */
     public requestProcessor!: RequestProcessor;
     public responseProcessor!: ResponseProcessor;
+    public errorProcessor!: ErrorProcessor;
 
     /**
      * CONTROLLERS
@@ -70,11 +72,10 @@ export class CommonService{
         if(!this.initializeLogger(this.property?.application?.logAppender, this.logger))
             return console.log(`COMMON SERVICE >>> Failed to initialize Application Logger! Check log configuration!!`);
                 
-        this.logger?.debug(`Initiating Request Processor`);
+        this.logger?.debug(`Initiating Processors`);
         this.requestProcessor = new RequestProcessor(this);
-                
-        this.logger?.debug(`Initiating Response Processor`);
         this.responseProcessor = new ResponseProcessor(this);
+        this.errorProcessor = new ErrorProcessor();
 
         this.logger?.debug(`Initiating Controllers`);
         this.graphApiController = new GraphApiController(this);

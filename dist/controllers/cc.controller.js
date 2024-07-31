@@ -169,7 +169,7 @@ class CCController {
                         result = await this.common.ccSvc.startCTClient(sessionId, tenantInfo.Id);
                         if (result?.ResultType === cc_service_1.HttpResultType.Failed) {
                             this.common.logger.error(result.Exception);
-                            tenantInfo.Status = `Failed to start! ${result?.Exception?.Message}`;
+                            tenantInfo.Status = `${this.common.errorProcessor.processError(result?.Exception)}`;
                         }
                         else {
                             tenantInfo.Status = 'Running';
@@ -231,7 +231,7 @@ class CCController {
                         result = await this.common.ccSvc.stopCTClient(sessionId, tenantInfo.Id);
                         if (result?.ResultType === cc_service_1.HttpResultType.Failed) {
                             this.common.logger.error(result.Exception);
-                            tenantInfo.Status = `Failed to stop! ${result?.Exception?.Message}`;
+                            tenantInfo.Status = `${this.common.errorProcessor.processError(result?.Exception)}`;
                         }
                         else {
                             tenantInfo.Status = 'Not Running';

@@ -3,5 +3,5 @@ POST http://localhost:10001/test HTTP/1.1
 content-type: application/json
 
 {
-	"text": "tenantlistss"
+	"text": "tenant | stop | MEDC"
 }

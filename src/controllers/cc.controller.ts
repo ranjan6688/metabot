@@ -203,7 +203,7 @@ export class CCController{
                         result = await this.common.ccSvc.startCTClient(sessionId, tenantInfo.Id);
                         if (result?.ResultType === HttpResultType.Failed) {
                             this.common.logger.error(result.Exception);
-                            tenantInfo.Status = `Failed to start! ${result?.Exception?.Message}`;
+                            tenantInfo.Status = `${this.common.errorProcessor.processError(result?.Exception)}`;
                         } else {
                             tenantInfo.Status = 'Running';
                         }
@@ -277,7 +277,7 @@ export class CCController{
                         result = await this.common.ccSvc.stopCTClient(sessionId, tenantInfo.Id);
                         if (result?.ResultType === HttpResultType.Failed) {
                             this.common.logger.error(result.Exception);
-                            tenantInfo.Status = `Failed to stop! ${result?.Exception?.Message}`;
+                            tenantInfo.Status = `${this.common.errorProcessor.processError(result?.Exception)}`;
                         } else {
                             tenantInfo.Status = 'Not Running';
                         }

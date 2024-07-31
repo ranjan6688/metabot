@@ -16,6 +16,7 @@ const express_service_1 = require("./express.service");
 const graphapi_controller_1 = require("./../controllers/graphapi.controller");
 const cc_controller_1 = require("./../controllers/cc.controller");
 const cipher_service_1 = require("./cipher.service");
+const error_processor_1 = require("./../processors/error.processor");
 class CommonService {
     /**
      * COMMON VARIABLES
@@ -28,6 +29,7 @@ class CommonService {
      */
     requestProcessor;
     responseProcessor;
+    errorProcessor;
     /**
      * CONTROLLERS
      */
@@ -63,10 +65,10 @@ class CommonService {
         console.log(`ABANDON >>> COMMON SERVICE >>> Initiating Application Logger`);
         if (!this.initializeLogger(this.property?.application?.logAppender, this.logger))
             return console.log(`COMMON SERVICE >>> Failed to initialize Application Logger! Check log configuration!!`);
-        this.logger?.debug(`Initiating Request Processor`);
+        this.logger?.debug(`Initiating Processors`);
         this.requestProcessor = new request_processor_1.RequestProcessor(this);
-        this.logger?.debug(`Initiating Response Processor`);
         this.responseProcessor = new response_processor_1.ResponseProcessor(this);
+        this.errorProcessor = new error_processor_1.ErrorProcessor();
         this.logger?.debug(`Initiating Controllers`);
         this.graphApiController = new graphapi_controller_1.GraphApiController(this);
         this.ccController = new cc_controller_1.CCController(this);

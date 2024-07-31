@@ -173,49 +173,49 @@ class GraphApiController {
         var cmdArray = [];
         this.commandList.forEach((command) => {
             if (command.name === CommandEntity.Help)
-                cmdArray.push(`*${command.name}*\ni.e.${command.name}`);
+                cmdArray.push(`*${command.name}*\ni.e. ${command.name}`);
             else if (command.name === CommandEntity.Application ||
                 command.name === CommandEntity.Database ||
                 command.name === CommandEntity.Tenant) {
-                var cmdStr = `*${command.name}*\ni.e.${command.name}`;
+                var cmdStr = `*${command.name}*\ni.e. ${command.name}`;
                 if (command?.actions?.length > 0) {
-                    cmdStr += `|[${command?.actions?.join(',')}]`;
+                    cmdStr += ` | [${command?.actions?.join(',')}]\n`;
                 }
                 cmdArray.push(cmdStr);
             }
             else {
-                var cmdStr = `*${command.name}*\ni.e.${command.name}`;
+                var cmdStr = `*${command.name}*\ni.e. ${command.name}`;
                 if (command?.actions?.length > 0) {
-                    cmdStr += `|[${command?.actions?.join(',')}]`;
+                    cmdStr += ` | [${command?.actions?.join(',')}]`;
                 }
-                cmdStr += `|${command.name}-code`;
-                cmdStr += `|tenant-code`;
+                cmdStr += ` | ${command.name}-code`;
+                cmdStr += ` | tenant-code\n`;
                 cmdArray.push(cmdStr);
             }
         });
-        return `*Invalid command!*\nAvailable command list are;\n${cmdArray.join('\n')}`;
+        return `*Invalid command!*\nAvailable command list are;\n\n${cmdArray.join('\n')}`;
     }
     async fetchCommandList() {
         var cmdArray = [];
         this.commandList.forEach((command) => {
             if (command.name === CommandEntity.Help)
-                cmdArray.push(`*${command.name}*\ni.e.${command.name}`);
+                cmdArray.push(`*${command.name}*\ni.e. ${command.name}`);
             else if (command.name === CommandEntity.Application ||
                 command.name === CommandEntity.Database ||
                 command.name === CommandEntity.Tenant) {
-                var cmdStr = `*${command.name}*\ni.e.${command.name}`;
+                var cmdStr = `*${command.name}*\ni.e. ${command.name}`;
                 if (command?.actions?.length > 0) {
-                    cmdStr += `|[${command?.actions?.join(',')}]`;
+                    cmdStr += ` | [${command?.actions?.join(',')}]\n`;
                 }
                 cmdArray.push(cmdStr);
             }
             else {
-                var cmdStr = `*${command.name}*\ni.e.${command.name}`;
+                var cmdStr = `*${command.name}*\ni.e. ${command.name}`;
                 if (command?.actions?.length > 0) {
-                    cmdStr += `|[${command?.actions?.join(',')}]`;
+                    cmdStr += ` | [${command?.actions?.join(',')}]`;
                 }
-                cmdStr += `|${command.name}-code`;
-                cmdStr += `|tenant-code`;
+                cmdStr += ` | ${command.name}-code`;
+                cmdStr += ` | tenant-code\n`;
                 cmdArray.push(cmdStr);
             }
         });

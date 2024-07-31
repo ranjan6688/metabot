@@ -397,6 +397,294 @@ export class CampaignController{
         return info;
     }
 
+    async startCampaign(tenantCode: any, campaignCode: any): Promise<CampaignInfo[]>{
+
+        var campaignInfos: CampaignInfo[] = [];
+
+        var result: any = await this.common.ccSvc.register();
+        if(result?.ResultType === HttpResultType.Success){
+
+            var sessionId = result?.Response?.SessionId;
+
+            result = await this.common.tenantController.fetchTenantDefaultAdmin(sessionId, tenantCode);
+            var tenantInfo: TenantInfo = result && result[0];
+            if(!tenantInfo){
+                this.common.logger.error(`No tenant found!`);
+            }else{
+                var client: CCClient = new CCClient();
+                client.ApplicationCode = `Atomos`;
+                client.ClientCode = tenantCode;
+                client.Username = tenantInfo.DefaultAdmin.LoginId;
+                client.Password = tenantInfo.DefaultAdmin.Password;
+
+                result = await this.common.ccSvc.login(sessionId, client);
+                if(result?.ResultType === HttpResultType.Success){
+                    
+                    result = await this.common.ccSvc.fetchCampaign(sessionId, campaignCode);
+                    if(result?.ResultType === HttpResultType.Success){
+                            
+                        await Promise.all(result?.Response?.Entities?.map(async (entity: any) => {
+                            
+                            var campaignInfo = new CampaignInfo();
+                            campaignInfo.Code = entity.Code;
+                            campaignInfo.Id = entity.Id;
+                            campaignInfo.Name = entity.Name;                       
+                            campaignInfo.Channels = entity.Channels;                       
+                            campaignInfo.Type = entity.CampaignType; 
+                            
+                            result = await this.common.ccSvc.fetchCampaignProperties(sessionId, entity.Id);
+                            campaignInfo.ContactList = result?.Response?.Entities[0]?.Global?.DefContactListCode || delete campaignInfo.ContactList;
+                            campaignInfo.TaskLimit = result?.Response?.Entities[0]?.Global?.AgentTaskLimit || delete campaignInfo.TaskLimit;
+    
+                            result = await this.common.ccSvc.startCampaign(sessionId, entity.Id);
+                            if(result?.ResultType === HttpResultType.Success){
+                                result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
+                                campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
+                                campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete campaignInfo.Status;
+                            }else{                                
+                                result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
+                                campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
+                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
+                            }
+
+                            campaignInfos.push(campaignInfo);
+                            campaignInfos = [...new Map(campaignInfos.map(item => [item['Id'], item])).values()];
+    
+                          }));
+    
+                    }else{
+                        this.common.logger.error(result.Exception);
+                    }
+                }else{
+                    this.common.logger.error(result.Exception);
+                }
+            }
+            
+        }else{
+            this.common.logger.error(result.Exception);
+        }
+
+        await this.common.ccSvc.logout(sessionId);
+
+        return campaignInfos;
+    }
+
+    async stopCampaign(tenantCode: any, campaignCode: any): Promise<CampaignInfo[]>{
+
+        var campaignInfos: CampaignInfo[] = [];
+
+        var result: any = await this.common.ccSvc.register();
+        if(result?.ResultType === HttpResultType.Success){
+
+            var sessionId = result?.Response?.SessionId;
+
+            result = await this.common.tenantController.fetchTenantDefaultAdmin(sessionId, tenantCode);
+            var tenantInfo: TenantInfo = result && result[0];
+            if(!tenantInfo){
+                this.common.logger.error(`No tenant found!`);
+            }else{
+                var client: CCClient = new CCClient();
+                client.ApplicationCode = `Atomos`;
+                client.ClientCode = tenantCode;
+                client.Username = tenantInfo.DefaultAdmin.LoginId;
+                client.Password = tenantInfo.DefaultAdmin.Password;
+
+                result = await this.common.ccSvc.login(sessionId, client);
+                if(result?.ResultType === HttpResultType.Success){
+                    
+                    result = await this.common.ccSvc.fetchCampaign(sessionId, campaignCode);
+                    if(result?.ResultType === HttpResultType.Success){
+                            
+                        await Promise.all(result?.Response?.Entities?.map(async (entity: any) => {
+                            
+                            var campaignInfo = new CampaignInfo();
+                            campaignInfo.Code = entity.Code;
+                            campaignInfo.Id = entity.Id;
+                            campaignInfo.Name = entity.Name;                       
+                            campaignInfo.Channels = entity.Channels;                       
+                            campaignInfo.Type = entity.CampaignType; 
+                            
+                            result = await this.common.ccSvc.fetchCampaignProperties(sessionId, entity.Id);
+                            campaignInfo.ContactList = result?.Response?.Entities[0]?.Global?.DefContactListCode || delete campaignInfo.ContactList;
+                            campaignInfo.TaskLimit = result?.Response?.Entities[0]?.Global?.AgentTaskLimit || delete campaignInfo.TaskLimit;
+    
+                            result = await this.common.ccSvc.stopCampaign(sessionId, entity.Id);
+                            if(result?.ResultType === HttpResultType.Success){
+                                result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
+                                campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
+                                campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete campaignInfo.Status;
+                            }else{                                
+                                result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
+                                campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
+                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
+                            }
+
+                            campaignInfos.push(campaignInfo);
+                            campaignInfos = [...new Map(campaignInfos.map(item => [item['Id'], item])).values()];
+    
+                          }));
+    
+                    }else{
+                        this.common.logger.error(result.Exception);
+                    }
+                }else{
+                    this.common.logger.error(result.Exception);
+                }
+            }
+            
+        }else{
+            this.common.logger.error(result.Exception);
+        }
+
+        await this.common.ccSvc.logout(sessionId);
+
+        return campaignInfos;
+    }
+
+    async loadCampaign(tenantCode: any, campaignCode: any): Promise<CampaignInfo[]>{
+
+        var campaignInfos: CampaignInfo[] = [];
+
+        var result: any = await this.common.ccSvc.register();
+        if(result?.ResultType === HttpResultType.Success){
+
+            var sessionId = result?.Response?.SessionId;
+
+            result = await this.common.tenantController.fetchTenantDefaultAdmin(sessionId, tenantCode);
+            var tenantInfo: TenantInfo = result && result[0];
+            if(!tenantInfo){
+                this.common.logger.error(`No tenant found!`);
+            }else{
+                var client: CCClient = new CCClient();
+                client.ApplicationCode = `Atomos`;
+                client.ClientCode = tenantCode;
+                client.Username = tenantInfo.DefaultAdmin.LoginId;
+                client.Password = tenantInfo.DefaultAdmin.Password;
+
+                result = await this.common.ccSvc.login(sessionId, client);
+                if(result?.ResultType === HttpResultType.Success){
+                    
+                    result = await this.common.ccSvc.fetchCampaign(sessionId, campaignCode);
+                    if(result?.ResultType === HttpResultType.Success){
+                            
+                        await Promise.all(result?.Response?.Entities?.map(async (entity: any) => {
+                            
+                            var campaignInfo = new CampaignInfo();
+                            campaignInfo.Code = entity.Code;
+                            campaignInfo.Id = entity.Id;
+                            campaignInfo.Name = entity.Name;                       
+                            campaignInfo.Channels = entity.Channels;                       
+                            campaignInfo.Type = entity.CampaignType; 
+                            
+                            result = await this.common.ccSvc.fetchCampaignProperties(sessionId, entity.Id);
+                            campaignInfo.ContactList = result?.Response?.Entities[0]?.Global?.DefContactListCode || delete campaignInfo.ContactList;
+                            campaignInfo.TaskLimit = result?.Response?.Entities[0]?.Global?.AgentTaskLimit || delete campaignInfo.TaskLimit;
+    
+                            result = await this.common.ccSvc.loadCampaign(sessionId, entity.Id);
+                            if(result?.ResultType === HttpResultType.Success){
+                                result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
+                                campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
+                                campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete campaignInfo.Status;
+                            }else{                                
+                                result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
+                                campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
+                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
+                            }
+
+                            campaignInfos.push(campaignInfo);
+                            campaignInfos = [...new Map(campaignInfos.map(item => [item['Id'], item])).values()];
+    
+                          }));
+    
+                    }else{
+                        this.common.logger.error(result.Exception);
+                    }
+                }else{
+                    this.common.logger.error(result.Exception);
+                }
+            }
+            
+        }else{
+            this.common.logger.error(result.Exception);
+        }
+
+        await this.common.ccSvc.logout(sessionId);
+
+        return campaignInfos;
+    }
+
+    async unloadCampaign(tenantCode: any, campaignCode: any): Promise<CampaignInfo[]>{
+
+        var campaignInfos: CampaignInfo[] = [];
+
+        var result: any = await this.common.ccSvc.register();
+        if(result?.ResultType === HttpResultType.Success){
+
+            var sessionId = result?.Response?.SessionId;
+
+            result = await this.common.tenantController.fetchTenantDefaultAdmin(sessionId, tenantCode);
+            var tenantInfo: TenantInfo = result && result[0];
+            if(!tenantInfo){
+                this.common.logger.error(`No tenant found!`);
+            }else{
+                var client: CCClient = new CCClient();
+                client.ApplicationCode = `Atomos`;
+                client.ClientCode = tenantCode;
+                client.Username = tenantInfo.DefaultAdmin.LoginId;
+                client.Password = tenantInfo.DefaultAdmin.Password;
+
+                result = await this.common.ccSvc.login(sessionId, client);
+                if(result?.ResultType === HttpResultType.Success){
+                    
+                    result = await this.common.ccSvc.fetchCampaign(sessionId, campaignCode);
+                    if(result?.ResultType === HttpResultType.Success){
+                            
+                        await Promise.all(result?.Response?.Entities?.map(async (entity: any) => {
+                            
+                            var campaignInfo = new CampaignInfo();
+                            campaignInfo.Code = entity.Code;
+                            campaignInfo.Id = entity.Id;
+                            campaignInfo.Name = entity.Name;                       
+                            campaignInfo.Channels = entity.Channels;                       
+                            campaignInfo.Type = entity.CampaignType; 
+                            
+                            result = await this.common.ccSvc.fetchCampaignProperties(sessionId, entity.Id);
+                            campaignInfo.ContactList = result?.Response?.Entities[0]?.Global?.DefContactListCode || delete campaignInfo.ContactList;
+                            campaignInfo.TaskLimit = result?.Response?.Entities[0]?.Global?.AgentTaskLimit || delete campaignInfo.TaskLimit;
+    
+                            result = await this.common.ccSvc.unloadCampaign(sessionId, entity.Id);
+                            if(result?.ResultType === HttpResultType.Success){
+                                result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
+                                campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
+                                campaignInfo.Status = this.formatCampaignState(result?.Response?.CampaignState) || delete campaignInfo.Status;
+                            }else{                                
+                                campaignInfo.Status = this.common.errorProcessor.processError(result?.Exception);
+                                result = await this.common.ccSvc.fetchCampaignStatus(sessionId, entity.Id);
+                                campaignInfo.DialMode = result?.Response?.DialMode || delete campaignInfo.DialMode;
+                            }
+
+                            campaignInfos.push(campaignInfo);
+                            campaignInfos = [...new Map(campaignInfos.map(item => [item['Id'], item])).values()];
+    
+                          }));
+    
+                    }else{
+                        this.common.logger.error(result.Exception);
+                    }
+                }else{
+                    this.common.logger.error(result.Exception);
+                }
+            }
+            
+        }else{
+            this.common.logger.error(result.Exception);
+        }
+
+        await this.common.ccSvc.logout(sessionId);
+
+        return campaignInfos;
+    }
+
     async fetchCampaignsResponse(tenantCode: any): Promise<string>{
 
         var responseStringArray: any[] = [];
@@ -455,6 +743,74 @@ export class CampaignController{
 
         var campaignPropertiesInfos: CampaignPropertiesInfo[] = await this.fetchCampaignProperties(tenantCode, campaignCode);
         campaignPropertiesInfos?.forEach((info: CampaignPropertiesInfo) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if(!replyMessage)
+            replyMessage = `No campaign found`;
+        return replyMessage;
+    }
+
+    async startCampaignResponse(tenantCode: any, campaignCode: any): Promise<string>{
+
+        var responseStringArray: any[] = [];
+        var keyValueStringArray: any[] = [];
+
+        var infos: CampaignInfo[] = await this.startCampaign(tenantCode, campaignCode);
+        infos?.forEach((info: CampaignInfo) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if(!replyMessage)
+            replyMessage = `No campaign found`;
+        return replyMessage;
+    }
+
+    async stopCampaignResponse(tenantCode: any, campaignCode: any): Promise<string>{
+
+        var responseStringArray: any[] = [];
+        var keyValueStringArray: any[] = [];
+
+        var infos: CampaignInfo[] = await this.stopCampaign(tenantCode, campaignCode);
+        infos?.forEach((info: CampaignInfo) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if(!replyMessage)
+            replyMessage = `No campaign found`;
+        return replyMessage;
+    }
+
+    async loadCampaignResponse(tenantCode: any, campaignCode: any): Promise<string>{
+
+        var responseStringArray: any[] = [];
+        var keyValueStringArray: any[] = [];
+
+        var infos: CampaignInfo[] = await this.loadCampaign(tenantCode, campaignCode);
+        infos?.forEach((info: CampaignInfo) => {
+            keyValueStringArray = this.getKeyValueStringArray(info);
+            responseStringArray.push(keyValueStringArray.join('\n'));
+        });
+        
+        var replyMessage = responseStringArray.join(`\n===============================\n`);
+        if(!replyMessage)
+            replyMessage = `No campaign found`;
+        return replyMessage;
+    }
+
+    async unloadCampaignResponse(tenantCode: any, campaignCode: any): Promise<string>{
+
+        var responseStringArray: any[] = [];
+        var keyValueStringArray: any[] = [];
+
+        var infos: CampaignInfo[] = await this.unloadCampaign(tenantCode, campaignCode);
+        infos?.forEach((info: CampaignInfo) => {
             keyValueStringArray = this.getKeyValueStringArray(info);
             responseStringArray.push(keyValueStringArray.join('\n'));
         });

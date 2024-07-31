@@ -280,6 +280,10 @@ exports.Request = {
         AbandonCallFetch: "AbandonCallFetch",
         CallAbandonCancel: "CallAbandonCancel",
         CampaignStatFetch: "CampaignStatFetch",
+        StartCampaign: "StartCampaign",
+        StopCampaign: "StopCampaign",
+        LoadCampaign: "LoadCampaign",
+        UnloadCampaign: "UnloadCampaign",
     },
     User: {
         Type: {

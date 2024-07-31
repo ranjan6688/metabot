@@ -646,6 +646,239 @@ export class CCService{
         });
 
     }
+    
+    startCampaign(sessionId: any, campaignId: any): Promise<HttpResult>{
+        
+        return new Promise((resolve: any) => {
+
+            var result: HttpResult = new HttpResult();
+
+            var ccServer: CCServer = this.common.property.application.ccServer;
+            var protocol: string = ccServer.isSsl === true ? 'https:' : 'http:';
+            var domain: string = ccServer.ipAddress + (ccServer.port ? ':'+ccServer.port : '');
+
+            Request.Id++;
+            let options = {
+                url: `${protocol}//${domain}/radius/cc/aws/fetch`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'SessionId': sessionId
+                },
+                strictSSL: this.common.property.application.ccServer.strictSsl,
+                json: {
+                    ReqId: Request.Id,
+                    ReqType: Request.Type.Control,
+                    ReqCode: Request.Code.StartCampaign,
+                    CampaignId: campaignId?.toString()
+                }
+            };
+  
+            request.post(options, (error: any, response: any, body: any) => {
+                console.log(error, response, body);
+                
+                if (error) {
+                    this.common.logger.error(`CC >> Failed to start campaign`, error);
+                    result.ResultType = HttpResultType.Failed;
+                    result.Exception = error;
+                    resolve(result);
+                }
+    
+                if (response) {
+                    this.common.logger.log(`CC >> Campaign started`, response);
+                    if(typeof response?.body === 'string')
+                        response = JSON.parse(response?.body);
+                    else
+                        response = response?.body;
+                    
+                    if (response.RespType === "Failed" || response.EvType === "Failed") {
+                        result.ResultType = HttpResultType.Failed;
+                        result.Exception = response;
+                    } else {
+                        result.ResultType = HttpResultType.Success;
+                        result.Response = response;
+                    }
+                         
+                    resolve(result);
+                }
+            });
+        });
+
+    }
+    
+    stopCampaign(sessionId: any, campaignId: any): Promise<HttpResult>{
+        
+        return new Promise((resolve: any) => {
+
+            var result: HttpResult = new HttpResult();
+
+            var ccServer: CCServer = this.common.property.application.ccServer;
+            var protocol: string = ccServer.isSsl === true ? 'https:' : 'http:';
+            var domain: string = ccServer.ipAddress + (ccServer.port ? ':'+ccServer.port : '');
+
+            Request.Id++;
+            let options = {
+                url: `${protocol}//${domain}/radius/cc/aws/fetch`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'SessionId': sessionId
+                },
+                strictSSL: this.common.property.application.ccServer.strictSsl,
+                json: {
+                    ReqId: Request.Id,
+                    ReqType: Request.Type.Control,
+                    ReqCode: Request.Code.StopCampaign,
+                    CampaignId: campaignId?.toString(),
+                    ForceStop: false
+                }
+            };
+  
+            request.post(options, (error: any, response: any, body: any) => {
+                console.log(error, response, body);
+                
+                if (error) {
+                    this.common.logger.error(`CC >> Failed to stop campaign`, error);
+                    result.ResultType = HttpResultType.Failed;
+                    result.Exception = error;
+                    resolve(result);
+                }
+    
+                if (response) {
+                    this.common.logger.log(`CC >> Campaign stopped`, response);
+                    if(typeof response?.body === 'string')
+                        response = JSON.parse(response?.body);
+                    else
+                        response = response?.body;
+                    
+                    if (response.RespType === "Failed" || response.EvType === "Failed") {
+                        result.ResultType = HttpResultType.Failed;
+                        result.Exception = response;
+                    } else {
+                        result.ResultType = HttpResultType.Success;
+                        result.Response = response;
+                    }
+                         
+                    resolve(result);
+                }
+            });
+        });
+
+    }
+    
+    loadCampaign(sessionId: any, campaignId: any): Promise<HttpResult>{
+        
+        return new Promise((resolve: any) => {
+
+            var result: HttpResult = new HttpResult();
+
+            var ccServer: CCServer = this.common.property.application.ccServer;
+            var protocol: string = ccServer.isSsl === true ? 'https:' : 'http:';
+            var domain: string = ccServer.ipAddress + (ccServer.port ? ':'+ccServer.port : '');
+
+            Request.Id++;
+            let options = {
+                url: `${protocol}//${domain}/radius/cc/aws/fetch`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'SessionId': sessionId
+                },
+                strictSSL: this.common.property.application.ccServer.strictSsl,
+                json: {
+                    ReqId: Request.Id,
+                    ReqType: Request.Type.Control,
+                    ReqCode: Request.Code.LoadCampaign,
+                    CampaignId: campaignId?.toString()
+                }
+            };
+  
+            request.post(options, (error: any, response: any, body: any) => {
+                console.log(error, response, body);
+                
+                if (error) {
+                    this.common.logger.error(`CC >> Failed to load campaign`, error);
+                    result.ResultType = HttpResultType.Failed;
+                    result.Exception = error;
+                    resolve(result);
+                }
+    
+                if (response) {
+                    this.common.logger.log(`CC >> Campaign loaded`, response);
+                    if(typeof response?.body === 'string')
+                        response = JSON.parse(response?.body);
+                    else
+                        response = response?.body;
+                    
+                    if (response.RespType === "Failed" || response.EvType === "Failed") {
+                        result.ResultType = HttpResultType.Failed;
+                        result.Exception = response;
+                    } else {
+                        result.ResultType = HttpResultType.Success;
+                        result.Response = response;
+                    }
+                         
+                    resolve(result);
+                }
+            });
+        });
+
+    }
+    
+    unloadCampaign(sessionId: any, campaignId: any): Promise<HttpResult>{
+        
+        return new Promise((resolve: any) => {
+
+            var result: HttpResult = new HttpResult();
+
+            var ccServer: CCServer = this.common.property.application.ccServer;
+            var protocol: string = ccServer.isSsl === true ? 'https:' : 'http:';
+            var domain: string = ccServer.ipAddress + (ccServer.port ? ':'+ccServer.port : '');
+
+            Request.Id++;
+            let options = {
+                url: `${protocol}//${domain}/radius/cc/aws/fetch`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'SessionId': sessionId
+                },
+                strictSSL: this.common.property.application.ccServer.strictSsl,
+                json: {
+                    ReqId: Request.Id,
+                    ReqType: Request.Type.Control,
+                    ReqCode: Request.Code.UnloadCampaign,
+                    CampaignId: campaignId?.toString()
+                }
+            };
+  
+            request.post(options, (error: any, response: any, body: any) => {
+                console.log(error, response, body);
+                
+                if (error) {
+                    this.common.logger.error(`CC >> Failed to unload campaign`, error);
+                    result.ResultType = HttpResultType.Failed;
+                    result.Exception = error;
+                    resolve(result);
+                }
+    
+                if (response) {
+                    this.common.logger.log(`CC >> Campaign unloaded`, response);
+                    if(typeof response?.body === 'string')
+                        response = JSON.parse(response?.body);
+                    else
+                        response = response?.body;
+                    
+                    if (response.RespType === "Failed" || response.EvType === "Failed") {
+                        result.ResultType = HttpResultType.Failed;
+                        result.Exception = response;
+                    } else {
+                        result.ResultType = HttpResultType.Success;
+                        result.Response = response;
+                    }
+                         
+                    resolve(result);
+                }
+            });
+        });
+
+    }
 }
 
 /**

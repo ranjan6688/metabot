@@ -1,7 +1,8 @@
+
 ### ASK BOT TEMPLATE
 POST http://localhost:10001/test HTTP/1.1
 content-type: application/json
 
 {
-	"text": "campaign-properties-ohlu-HEALTHCONNECTT"
+	"text": "campaign-unload-ohlu-HEALTHCONNECTT"
 }

@@ -155,6 +155,8 @@ class LoggerService {
      */
     debug = (...args) => {
         this.LOGGER.debug(...this.formatLogArguments(args));
+        if (process.env?.OverwriteLog)
+            console.log(...this.formatLogArguments(args));
     };
     /**
      * LOGGER LOG METHOD
@@ -162,6 +164,8 @@ class LoggerService {
      */
     log = (...args) => {
         this.LOGGER.debug(...this.formatLogArguments(args));
+        if (process.env?.OverwriteLog)
+            console.log(...this.formatLogArguments(args));
     };
     /**
      * LOGGER INFO METHOD
@@ -169,6 +173,8 @@ class LoggerService {
      */
     info = (...args) => {
         this.LOGGER.info(...this.formatLogArguments(args));
+        if (process.env?.OverwriteLog)
+            console.log(...this.formatLogArguments(args));
     };
     /**
      * LOGGER WARN METHOD
@@ -176,6 +182,8 @@ class LoggerService {
      */
     warn = (...args) => {
         this.LOGGER.warn(...this.formatLogArguments(args));
+        if (process.env?.OverwriteLog)
+            console.log(...this.formatLogArguments(args));
     };
     /**
      * LOGGER ERROR METHOD
@@ -183,6 +191,8 @@ class LoggerService {
      */
     error = (...args) => {
         this.LOGGER.error(...this.formatLogArguments(args));
+        if (process.env?.OverwriteLog)
+            console.log(...this.formatLogArguments(args));
     };
     /**
      * FORMAT LOGGER ARGUEMENTS

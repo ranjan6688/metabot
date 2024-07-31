@@ -302,6 +302,38 @@ export class CommandService{
             }
         }
 
+        if(command.action === CommandAction.Start){
+            if(command.entityCode && command.tenantCode){
+                replyMessage = await this.common.campaignController.startCampaignResponse(command?.tenantCode, command?.entityCode);
+            }else{                
+                replyMessage = `Invalid tenant code!`;
+            }
+        }
+
+        if(command.action === CommandAction.Stop){
+            if(command.entityCode && command.tenantCode){
+                replyMessage = await this.common.campaignController.stopCampaignResponse(command?.tenantCode, command?.entityCode);
+            }else{                
+                replyMessage = `Invalid tenant code!`;
+            }
+        }
+
+        if(command.action === CommandAction.Load){
+            if(command.entityCode && command.tenantCode){
+                replyMessage = await this.common.campaignController.loadCampaignResponse(command?.tenantCode, command?.entityCode);
+            }else{                
+                replyMessage = `Invalid tenant code!`;
+            }
+        }
+
+        if(command.action === CommandAction.Unload){
+            if(command.entityCode && command.tenantCode){
+                replyMessage = await this.common.campaignController.unloadCampaignResponse(command?.tenantCode, command?.entityCode);
+            }else{                
+                replyMessage = `Invalid tenant code!`;
+            }
+        }
+
         if(!replyMessage){
             replyMessage = await this.fetchCommandList(true);
         }

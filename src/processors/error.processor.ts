@@ -12,6 +12,9 @@ export class ErrorProcessor{
         if(errorResponse?.EvCause)
             return this.processEvCause(errorResponse?.EvCause);
 
+        if(errorResponse?.Expected || errorResponse?.Found)
+            return `Found ${errorResponse?.Found} but expected ${errorResponse?.Expected}`;
+
         return '';
     }
 

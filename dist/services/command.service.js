@@ -10,17 +10,17 @@ class CommandService {
     }
     registerAllCommands() {
         var cmdInfo = new CommandInfo();
-        cmdInfo.name = CommandEntity.Application;
-        cmdInfo.actions = [CommandAction.List];
-        this.commandList.push(cmdInfo);
+        // cmdInfo.name = CommandEntity.Application;
+        // cmdInfo.actions = [CommandAction.List];
+        // this.commandList.push(cmdInfo);
         // cmdInfo = new CommandInfo();
         // cmdInfo.name = CommandEntity.Callback;
         // cmdInfo.actions = [CommandAction.List];
         // this.commandList.push(cmdInfo);
-        cmdInfo = new CommandInfo();
-        cmdInfo.name = CommandEntity.Campaign;
-        cmdInfo.actions = [CommandAction.List, CommandAction.Properties, CommandAction.Status, CommandAction.Load, CommandAction.Start, CommandAction.Stop, CommandAction.Unload];
-        this.commandList.push(cmdInfo);
+        // cmdInfo = new CommandInfo();
+        // cmdInfo.name = CommandEntity.Campaign;
+        // cmdInfo.actions = [CommandAction.List, CommandAction.Properties, CommandAction.Status, CommandAction.Load, CommandAction.Start, CommandAction.Stop, CommandAction.Unload];
+        // this.commandList.push(cmdInfo);
         // cmdInfo = new CommandInfo();
         // cmdInfo.name = CommandEntity.CampaignAbandonCallList;
         // cmdInfo.actions = [CommandAction.List];
@@ -33,21 +33,45 @@ class CommandService {
         // cmdInfo.name = CommandEntity.ContactList;
         // cmdInfo.actions = [CommandAction.List];
         // this.commandList.push(cmdInfo);
-        cmdInfo = new CommandInfo();
-        cmdInfo.name = CommandEntity.Database;
-        cmdInfo.actions = [CommandAction.List, CommandAction.Status];
-        this.commandList.push(cmdInfo);
+        // cmdInfo = new CommandInfo();
+        // cmdInfo.name = CommandEntity.Database;
+        // cmdInfo.actions = [CommandAction.List, CommandAction.Status];
+        // this.commandList.push(cmdInfo);
         // cmdInfo = new CommandInfo();
         // cmdInfo.name = CommandEntity.Skill;
         // cmdInfo.actions = [CommandAction.List];
         // this.commandList.push(cmdInfo);
+        // cmdInfo = new CommandInfo();
+        // cmdInfo.name = CommandEntity.Licence;
+        // cmdInfo.actions = [CommandAction.List];
+        // this.commandList.push(cmdInfo);
+        // cmdInfo = new CommandInfo();
+        // cmdInfo.name = CommandEntity.Tenant;
+        // cmdInfo.actions = [CommandAction.List, CommandAction.Status, CommandAction.Start, CommandAction.Stop];
+        // this.commandList.push(cmdInfo);
         cmdInfo = new CommandInfo();
-        cmdInfo.name = CommandEntity.Licence;
-        cmdInfo.actions = [CommandAction.List];
+        cmdInfo.name = CommandEntity.Agent;
+        cmdInfo.actions = [CommandAction.Status];
         this.commandList.push(cmdInfo);
         cmdInfo = new CommandInfo();
-        cmdInfo.name = CommandEntity.Tenant;
-        cmdInfo.actions = [CommandAction.List, CommandAction.Status, CommandAction.Start, CommandAction.Stop];
+        cmdInfo.name = CommandEntity.Campaign;
+        cmdInfo.actions = [CommandAction.Status];
+        this.commandList.push(cmdInfo);
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.Call;
+        cmdInfo.actions = [CommandAction.Status];
+        this.commandList.push(cmdInfo);
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.Chat;
+        cmdInfo.actions = [CommandAction.Status];
+        this.commandList.push(cmdInfo);
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.Email;
+        cmdInfo.actions = [CommandAction.Status];
+        this.commandList.push(cmdInfo);
+        cmdInfo = new CommandInfo();
+        cmdInfo.name = CommandEntity.Queue;
+        cmdInfo.actions = [CommandAction.Status];
         this.commandList.push(cmdInfo);
         cmdInfo = new CommandInfo();
         cmdInfo.name = CommandEntity.Help;
@@ -66,6 +90,11 @@ class CommandService {
         command.action = messages[1]?.trim();
         command.tenantCode = messages[2]?.trim()?.toUpperCase();
         command.entityCode = messages[3]?.trim()?.toUpperCase();
+        command.others = {};
+        if (command.entity === CommandEntity.Call &&
+            command.action === CommandAction.BargeIn &&
+            messages[4]?.trim())
+            command.others.toAddress = messages[4]?.trim()?.toUpperCase();
         return command;
     }
     async fetchCommandList(isInvalidCommand = false) {
@@ -111,30 +140,48 @@ class CommandService {
                     case CommandEntity.Help:
                         replyMessage = await this.fetchCommandList();
                         break;
-                    case CommandEntity.Application:
-                        replyMessage = await this.onApplicationCommandRecieved(command);
-                        break;
-                    case CommandEntity.Callback:
+                    // case CommandEntity.Application:
+                    //     replyMessage = await this.onApplicationCommandRecieved(command);
+                    //     break;
+                    // case CommandEntity.Callback:
+                    //     break;
+                    // case CommandEntity.Campaign:
+                    //     replyMessage = await this.onCampaignCommandRecieved(command);
+                    //     break;
+                    // case CommandEntity.CampaignAbandonCallList:
+                    //     break;
+                    // case CommandEntity.CampaignDisposition:
+                    //     break;
+                    // case CommandEntity.ContactList:
+                    //     break;
+                    // case CommandEntity.Database:
+                    //     replyMessage = await this.onDatabaseCommandRecieved(command);
+                    //     break;
+                    // case CommandEntity.Skill:
+                    //     break;
+                    // case CommandEntity.Tenant:
+                    //     replyMessage = await this.onTenantCommandRecieved(command);
+                    //     break;
+                    // case CommandEntity.Licence:
+                    //     replyMessage = await this.onLicenseCommandRecieved(command);
+                    //     break;
+                    case CommandEntity.Agent:
+                        replyMessage = await this.onAgentStatusCommandRecieved(command);
                         break;
                     case CommandEntity.Campaign:
-                        replyMessage = await this.onCampaignCommandRecieved(command);
+                        replyMessage = await this.onCampaignStatusCommandRecieved(command);
                         break;
-                    case CommandEntity.CampaignAbandonCallList:
+                    case CommandEntity.Call:
+                        replyMessage = await this.onCallStatusCommandRecieved(command);
                         break;
-                    case CommandEntity.CampaignDisposition:
+                    case CommandEntity.Chat:
+                        replyMessage = await this.onChatStatusCommandRecieved(command);
                         break;
-                    case CommandEntity.ContactList:
+                    case CommandEntity.Email:
+                        replyMessage = await this.onEmailStatusCommandRecieved(command);
                         break;
-                    case CommandEntity.Database:
-                        replyMessage = await this.onDatabaseCommandRecieved(command);
-                        break;
-                    case CommandEntity.Skill:
-                        break;
-                    case CommandEntity.Tenant:
-                        replyMessage = await this.onTenantCommandRecieved(command);
-                        break;
-                    case CommandEntity.Licence:
-                        replyMessage = await this.onLicenseCommandRecieved(command);
+                    case CommandEntity.Queue:
+                        replyMessage = await this.onQueueStatusCommandRecieved(command);
                         break;
                     default:
                         replyMessage = await this.fetchCommandList(true);
@@ -150,6 +197,73 @@ class CommandService {
         }
         if (!replyMessage)
             replyMessage = await this.fetchCommandList(true);
+        return replyMessage;
+    }
+    async onAgentStatusCommandRecieved(command) {
+        var replyMessage = '';
+        if (command.tenantCode) {
+            replyMessage = await this.common.rtController.fetchAgentStatusResponse(command?.tenantCode);
+        }
+        if (!replyMessage) {
+            replyMessage = await this.fetchCommandList(true);
+        }
+        return replyMessage;
+    }
+    async onCampaignStatusCommandRecieved(command) {
+        var replyMessage = '';
+        if (command.tenantCode) {
+            replyMessage = await this.common.rtController.fetchCampaignStatusResponse(command?.tenantCode);
+        }
+        if (!replyMessage) {
+            replyMessage = await this.fetchCommandList(true);
+        }
+        return replyMessage;
+    }
+    async onCallStatusCommandRecieved(command) {
+        var replyMessage = '';
+        if (command.action === CommandAction.Status) {
+            if (command.tenantCode) {
+                replyMessage = await this.common.rtController.fetchCallStatusResponse(command?.tenantCode);
+            }
+        }
+        if (command.action === CommandAction.BargeIn) {
+            if (command.tenantCode) {
+                replyMessage = await this.common.rtController.callBargeInResponse(command?.tenantCode, command?.entityCode, command?.others?.toAddress);
+            }
+        }
+        if (!replyMessage) {
+            replyMessage = await this.fetchCommandList(true);
+        }
+        return replyMessage;
+    }
+    async onChatStatusCommandRecieved(command) {
+        var replyMessage = '';
+        if (command.tenantCode) {
+            replyMessage = await this.common.rtController.fetchChatStatusResponse(command?.tenantCode);
+        }
+        if (!replyMessage) {
+            replyMessage = await this.fetchCommandList(true);
+        }
+        return replyMessage;
+    }
+    async onEmailStatusCommandRecieved(command) {
+        var replyMessage = '';
+        if (command.tenantCode) {
+            replyMessage = await this.common.rtController.fetchEmailStatusResponse(command?.tenantCode);
+        }
+        if (!replyMessage) {
+            replyMessage = await this.fetchCommandList(true);
+        }
+        return replyMessage;
+    }
+    async onQueueStatusCommandRecieved(command) {
+        var replyMessage = '';
+        if (command.tenantCode) {
+            replyMessage = await this.common.rtController.fetchQueueStatusResponse(command?.tenantCode);
+        }
+        if (!replyMessage) {
+            replyMessage = await this.fetchCommandList(true);
+        }
         return replyMessage;
     }
     async onApplicationCommandRecieved(command) {
@@ -306,6 +420,7 @@ class Command {
     tenantCode;
     action;
     entityCode;
+    others;
 }
 exports.Command = Command;
 class CommandInfo {
@@ -320,12 +435,17 @@ var CommandEntity;
     CommandEntity["Licence"] = "licence";
     CommandEntity["Application"] = "application";
     CommandEntity["Database"] = "database";
-    CommandEntity["Campaign"] = "campaign";
     CommandEntity["CampaignDisposition"] = "campaigndisposition";
     CommandEntity["Skill"] = "skill";
     CommandEntity["Callback"] = "callback";
     CommandEntity["ContactList"] = "contactlist";
     CommandEntity["CampaignAbandonCallList"] = "campaignabandoncalllist";
+    CommandEntity["Agent"] = "agent";
+    CommandEntity["Campaign"] = "campaign";
+    CommandEntity["Call"] = "call";
+    CommandEntity["Chat"] = "chat";
+    CommandEntity["Email"] = "email";
+    CommandEntity["Queue"] = "queue";
 })(CommandEntity || (exports.CommandEntity = CommandEntity = {}));
 var CommandAction;
 (function (CommandAction) {
@@ -336,5 +456,6 @@ var CommandAction;
     CommandAction["Unload"] = "unload";
     CommandAction["Properties"] = "properties";
     CommandAction["Status"] = "status";
+    CommandAction["BargeIn"] = "bargein";
 })(CommandAction || (exports.CommandAction = CommandAction = {}));
 //# sourceMappingURL=command.service.js.map

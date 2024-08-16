@@ -741,6 +741,56 @@ class CCService {
             });
         });
     }
+    callBargeIn(sessionId, entity, toAddress) {
+        return new Promise((resolve) => {
+            var result = new HttpResult();
+            var ccServer = this.common.property.application.ccServer;
+            var protocol = ccServer.isSsl === true ? 'https:' : 'http:';
+            var domain = ccServer.ipAddress + (ccServer.port ? ':' + ccServer.port : '');
+            request_processor_1.Request.Id++;
+            let options = {
+                url: `${protocol}//${domain}/radius/cc/aws/fetch`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'SessionId': sessionId
+                },
+                strictSSL: this.common.property.application.ccServer.strictSsl,
+                json: {
+                    ReqId: request_processor_1.Request.Id,
+                    ReqType: request_processor_1.Request.Type.Control,
+                    ReqCode: request_processor_1.Request.Code.BargeInCall,
+                    Address: toAddress,
+                    AgentId: entity.CurrAgent.Id.toString(),
+                    UxSessID: entity.UCallID
+                }
+            };
+            request_1.default.post(options, (error, response, body) => {
+                console.log(error, response, body);
+                if (error) {
+                    this.common.logger.error(`CC >> Failed to bargein`, error);
+                    result.ResultType = HttpResultType.Failed;
+                    result.Exception = error;
+                    resolve(result);
+                }
+                if (response) {
+                    this.common.logger.log(`CC >> Call barged in`, response);
+                    if (typeof response?.body === 'string')
+                        response = JSON.parse(response?.body);
+                    else
+                        response = response?.body;
+                    if (response.RespType === "Failed" || response.EvType === "Failed") {
+                        result.ResultType = HttpResultType.Failed;
+                        result.Exception = response;
+                    }
+                    else {
+                        result.ResultType = HttpResultType.Success;
+                        result.Response = response;
+                    }
+                    resolve(result);
+                }
+            });
+        });
+    }
 }
 exports.CCService = CCService;
 /**

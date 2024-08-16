@@ -6,3 +6,20 @@ content-type: application/json
 {
 	"text": "campaign-load-ohlu-HEALTHCONNECTT"
 }
+
+### ASK BOT TEMPLATE
+POST http://localhost:10001/test HTTP/1.1
+content-type: application/json
+
+{
+	"text": "call-bargein-ohlu-19100c5e60a9478ba283d4b3bddd9130-917809525145"
+}
+
+
+	# "text": "call-bargein-ohlu-19100c5e60a9478ba283d4b3bddd9130-7809525145"
+
+	
+
+### ASK BOT TEMPLATE
+GET http://localhost:10001/api/encrypt?text=suroot HTTP/1.1
+content-type: application/json

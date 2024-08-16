@@ -32,6 +32,7 @@ export class PropertyService {
         application.graphApi = this.getAppGraphApiProperties();
         application.logAppender = this.getAppLogProperties();
         application.ccServer = this.getAppCCServerProperties();
+        application.rtServer = this.getAppRTServerProperties();
 
         return application;
     }
@@ -52,6 +53,14 @@ export class PropertyService {
         ccServer.suPassword = process.env.CC_SERVER_SU_PASSWORD;
 
         return ccServer;
+    }
+
+    private getAppRTServerProperties(): RTServer{
+        var rtServer: RTServer = new RTServer();
+        rtServer.ipAddress = process.env.RT_SERVER_IPADDRESS;
+        rtServer.port = parseInt(process.env.RT_SERVER_PORT);
+
+        return rtServer;
     }
 
     private getAppLogProperties(): LogAppender{
@@ -112,6 +121,7 @@ export class Application {
     serveLogFiles!: boolean;    
     enableUserAgent!: boolean;
     ccServer!: CCServer;
+    rtServer!: RTServer;
 }
 
 export class GraphAPI{
@@ -126,4 +136,11 @@ export class CCServer{
     strictSsl: boolean = false;
     suLoginId!: string;
     suPassword!: string;
+}
+
+export class RTServer{
+    ipAddress!: any;
+    port!: number;
+    isSsl: boolean = true;
+    strictSsl: boolean = false;
 }

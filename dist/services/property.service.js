@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CCServer = exports.GraphAPI = exports.Application = exports.HttpMethod = exports.Property = exports.PropertyService = void 0;
+exports.RTServer = exports.CCServer = exports.GraphAPI = exports.Application = exports.HttpMethod = exports.Property = exports.PropertyService = void 0;
 const path_1 = __importDefault(require("path"));
 const logger_service_1 = require("./logger.service");
 class PropertyService {
@@ -34,6 +34,7 @@ class PropertyService {
         application.graphApi = this.getAppGraphApiProperties();
         application.logAppender = this.getAppLogProperties();
         application.ccServer = this.getAppCCServerProperties();
+        application.rtServer = this.getAppRTServerProperties();
         return application;
     }
     getAppGraphApiProperties() {
@@ -49,6 +50,12 @@ class PropertyService {
         ccServer.suLoginId = process.env.CC_SERVER_SU_LOGIN_ID;
         ccServer.suPassword = process.env.CC_SERVER_SU_PASSWORD;
         return ccServer;
+    }
+    getAppRTServerProperties() {
+        var rtServer = new RTServer();
+        rtServer.ipAddress = process.env.RT_SERVER_IPADDRESS;
+        rtServer.port = parseInt(process.env.RT_SERVER_PORT);
+        return rtServer;
     }
     getAppLogProperties() {
         var logAppender = new logger_service_1.LogAppender();
@@ -100,6 +107,7 @@ class Application {
     serveLogFiles;
     enableUserAgent;
     ccServer;
+    rtServer;
 }
 exports.Application = Application;
 class GraphAPI {
@@ -116,4 +124,11 @@ class CCServer {
     suPassword;
 }
 exports.CCServer = CCServer;
+class RTServer {
+    ipAddress;
+    port;
+    isSsl = true;
+    strictSsl = false;
+}
+exports.RTServer = RTServer;
 //# sourceMappingURL=property.service.js.map

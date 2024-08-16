@@ -23,6 +23,8 @@ const tenant_controller_1 = require("./../controllers/tenant.controller");
 const database_controller_1 = require("./../controllers/database.controller");
 const application_controller_1 = require("./../controllers/application.controller");
 const command_service_1 = require("./command.service");
+const rt_service_1 = require("./rt.service");
+const rt_controller_1 = require("./../controllers/rt.controller");
 class CommonService {
     /**
      * COMMON VARIABLES
@@ -41,6 +43,7 @@ class CommonService {
      */
     graphApiController;
     ccController;
+    rtController;
     appController;
     campaignController;
     dbController;
@@ -52,6 +55,7 @@ class CommonService {
     apiSvc;
     expressSvc;
     ccSvc;
+    rtSvc;
     chipherSvc;
     cmdSvc;
     /**
@@ -84,6 +88,7 @@ class CommonService {
         this.logger?.debug(`Initiating Controllers`);
         this.graphApiController = new graphapi_controller_1.GraphApiController(this);
         this.ccController = new cc_controller_1.CCController(this);
+        this.rtController = new rt_controller_1.RTController(this);
         this.tenantController = new tenant_controller_1.TenantController(this);
         this.appController = new application_controller_1.AppController(this);
         this.dbController = new database_controller_1.DbController(this);
@@ -93,6 +98,7 @@ class CommonService {
         this.chipherSvc = new cipher_service_1.CipherService();
         this.apiSvc = new api_service_1.APIService(this);
         this.ccSvc = new cc_service_1.CCService(this);
+        this.rtSvc = new rt_service_1.RTService(this);
         this.cmdSvc = new command_service_1.CommandService(this);
         this.expressSvc = new express_service_1.ExpressService(this);
         this.expressSvc.init();

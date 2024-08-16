@@ -17,6 +17,8 @@ import { TenantController } from "./../controllers/tenant.controller";
 import { DbController } from "./../controllers/database.controller";
 import { AppController } from "./../controllers/application.controller";
 import { CommandService } from "./command.service";
+import { RTService } from "./rt.service";
+import { RTController } from "./../controllers/rt.controller";
 
 export class CommonService{
 
@@ -39,6 +41,7 @@ export class CommonService{
      */
     public graphApiController!: GraphApiController;
     public ccController!: CCController;
+    public rtController!: RTController;
     public appController!: AppController;
     public campaignController!: CampaignController;
     public dbController!: DbController;
@@ -51,6 +54,7 @@ export class CommonService{
     public apiSvc!: APIService;
     public expressSvc !: ExpressService;
     public ccSvc!: CCService;
+    public rtSvc!: RTService;
     public chipherSvc!: CipherService;
     public cmdSvc!: CommandService;
     
@@ -93,6 +97,7 @@ export class CommonService{
         this.logger?.debug(`Initiating Controllers`);
         this.graphApiController = new GraphApiController(this);
         this.ccController = new CCController(this);
+        this.rtController = new RTController(this);
         this.tenantController = new TenantController(this);
         this.appController = new AppController(this);
         this.dbController = new DbController(this);
@@ -103,6 +108,7 @@ export class CommonService{
         this.chipherSvc = new CipherService();
         this.apiSvc = new APIService(this);     
         this.ccSvc = new CCService(this);
+        this.rtSvc = new RTService(this);
         this.cmdSvc = new CommandService(this);
         this.expressSvc = new ExpressService(this);
         this.expressSvc.init();

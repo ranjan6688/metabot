@@ -284,6 +284,7 @@ exports.Request = {
         StopCampaign: "StopCampaign",
         LoadCampaign: "LoadCampaign",
         UnloadCampaign: "UnloadCampaign",
+        BargeInCall: "BargeInCall"
     },
     User: {
         Type: {

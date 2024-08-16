@@ -134,7 +134,7 @@ export class LoggerService{
      */
     debug = (...args: any[]): void => {
       this.LOGGER.debug(...this.formatLogArguments(args));
-      if(process.env?.OverwriteLog)
+      if(process.env?.OVERWRITE_LOG === 'TRUE')
         console.log(...this.formatLogArguments(args));
     };
     
@@ -144,7 +144,7 @@ export class LoggerService{
      */
     log = (...args: any[]): void => {
       this.LOGGER.debug(...this.formatLogArguments(args));
-      if(process.env?.OverwriteLog)
+      if(process.env?.OVERWRITE_LOG === 'TRUE')
         console.log(...this.formatLogArguments(args));
     };
     
@@ -154,7 +154,7 @@ export class LoggerService{
      */
     info = (...args: any[]): void => {
       this.LOGGER.info(...this.formatLogArguments(args));
-      if(process.env?.OverwriteLog)
+      if(process.env?.OVERWRITE_LOG === 'TRUE')
         console.log(...this.formatLogArguments(args));
     };
     
@@ -164,7 +164,7 @@ export class LoggerService{
      */
     warn = (...args: any[]): void => {
       this.LOGGER.warn(...this.formatLogArguments(args));
-      if(process.env?.OverwriteLog)
+      if(process.env?.OVERWRITE_LOG === 'TRUE')
         console.log(...this.formatLogArguments(args));
     };
     
@@ -174,7 +174,7 @@ export class LoggerService{
      */
     error = (...args: any[]): void => {
       this.LOGGER.error(...this.formatLogArguments(args));
-      if(process.env?.OverwriteLog)
+      if(process.env?.OVERWRITE_LOG === 'TRUE')
         console.log(...this.formatLogArguments(args));
     };
     

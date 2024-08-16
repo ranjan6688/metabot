@@ -72,7 +72,7 @@ export class CommandService{
         
         cmdInfo = new CommandInfo();
         cmdInfo.name = CommandEntity.Call;
-        cmdInfo.actions = [CommandAction.Status];
+        cmdInfo.actions = [CommandAction.Status, CommandAction.BargeIn];
         this.commandList.push(cmdInfo);
         
         cmdInfo = new CommandInfo();

@@ -62,7 +62,7 @@ export class CCController{
                 this.common.logger.error(result.Exception);
             }
     
-            await this.common.rtSvc.logout(sessionId);
+            await this.common.ccSvc.logout(sessionId);
         }
 
         return false;

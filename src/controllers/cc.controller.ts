@@ -24,7 +24,7 @@ export class CCController{
                 client.Username = tenantInfo.DefaultAdmin.LoginId;
                 client.Password = tenantInfo.DefaultAdmin.Password;
 
-                await this.common.ccSvc.logout(sessionId);
+                // await this.common.ccSvc.logout(sessionId);
                 return client;
             }
             
@@ -32,7 +32,7 @@ export class CCController{
             this.common.logger.error(result.Exception);
         }
 
-        await this.common.ccSvc.logout(sessionId);
+        // await this.common.ccSvc.logout(sessionId);
         return undefined;
     }
 
@@ -62,7 +62,7 @@ export class CCController{
                 this.common.logger.error(result.Exception);
             }
     
-            // await this.common.ccSvc.logout(sessionId);
+            await this.common.ccSvc.logout(sessionId);
         }
 
         return false;
